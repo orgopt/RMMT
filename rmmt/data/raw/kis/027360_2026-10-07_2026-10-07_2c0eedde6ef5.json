@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:06.193590+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-420",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-10.41",
+      "stck_prdy_clpr": "4035",
+      "acml_vol": "2712751",
+      "acml_tr_pbmn": "10253701706",
+      "hts_kor_isnm": "아주IB투자",
+      "stck_prpr": "3615",
+      "stck_shrn_iscd": "027360",
+      "prdy_vol": "6021206",
+      "stck_mxpr": "5240",
+      "stck_llam": "2825",
+      "stck_oprc": "4020",
+      "stck_hgpr": "4030",
+      "stck_lwpr": "3605",
+      "stck_prdy_oprc": "4115",
+      "stck_prdy_hgpr": "4435",
+      "stck_prdy_lwpr": "4000",
+      "askp": "3615",
+      "bidp": "3605",
+      "prdy_vrss_vol": "-3308455",
+      "vol_tnrt": "2.24",
+      "stck_fcam": "500",
+      "lstn_stcn": "121145406",
+      "cpfn": "606",
+      "hts_avls": "4379",
+      "per": "52.39",
+      "eps": "69.00",
+      "pbr": "1.62",
+      "itewhol_loan_rmnd_ratem name": "2.53"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "3615",
+        "stck_oprc": "4020",
+        "stck_hgpr": "4030",
+        "stck_lwpr": "3605",
+        "acml_vol": "2712751",
+        "acml_tr_pbmn": "10253701706",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-420",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

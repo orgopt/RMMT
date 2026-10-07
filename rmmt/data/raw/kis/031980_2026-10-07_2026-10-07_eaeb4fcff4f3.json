@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:12.483276+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "4500",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "2.28",
+      "stck_prdy_clpr": "197000",
+      "acml_vol": "243032",
+      "acml_tr_pbmn": "48762786300",
+      "hts_kor_isnm": "피에스케이홀딩스",
+      "stck_prpr": "201500",
+      "stck_shrn_iscd": "031980",
+      "prdy_vol": "212756",
+      "stck_mxpr": "256000",
+      "stck_llam": "137900",
+      "stck_oprc": "193000",
+      "stck_hgpr": "208500",
+      "stck_lwpr": "187200",
+      "stck_prdy_oprc": "201000",
+      "stck_prdy_hgpr": "206500",
+      "stck_prdy_lwpr": "187100",
+      "askp": "202000",
+      "bidp": "201500",
+      "prdy_vrss_vol": "30276",
+      "vol_tnrt": "1.13",
+      "stck_fcam": "500",
+      "lstn_stcn": "21562395",
+      "cpfn": "108",
+      "hts_avls": "43448",
+      "per": "47.39",
+      "eps": "4252.00",
+      "pbr": "8.58",
+      "itewhol_loan_rmnd_ratem name": "0.22"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "201500",
+        "stck_oprc": "193000",
+        "stck_hgpr": "208500",
+        "stck_lwpr": "187200",
+        "acml_vol": "243032",
+        "acml_tr_pbmn": "48762786300",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "4500",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

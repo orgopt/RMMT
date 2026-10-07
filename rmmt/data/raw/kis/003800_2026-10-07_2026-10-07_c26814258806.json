@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:57:51.802460+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "350",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "1.09",
+      "stck_prdy_clpr": "32050",
+      "acml_vol": "2101",
+      "acml_tr_pbmn": "67277900",
+      "hts_kor_isnm": "에이스침대",
+      "stck_prpr": "32400",
+      "stck_shrn_iscd": "003800",
+      "prdy_vol": "1704",
+      "stck_mxpr": "41650",
+      "stck_llam": "22450",
+      "stck_oprc": "32050",
+      "stck_hgpr": "32500",
+      "stck_lwpr": "31950",
+      "stck_prdy_oprc": "32000",
+      "stck_prdy_hgpr": "32350",
+      "stck_prdy_lwpr": "31900",
+      "askp": "32350",
+      "bidp": "31950",
+      "prdy_vrss_vol": "397",
+      "vol_tnrt": "0.02",
+      "stck_fcam": "1000",
+      "lstn_stcn": "11090000",
+      "cpfn": "111",
+      "hts_avls": "3593",
+      "per": "6.42",
+      "eps": "5047.00",
+      "pbr": "0.46",
+      "itewhol_loan_rmnd_ratem name": "0.00"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "32400",
+        "stck_oprc": "32050",
+        "stck_hgpr": "32500",
+        "stck_lwpr": "31950",
+        "acml_vol": "2101",
+        "acml_tr_pbmn": "67277900",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "350",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

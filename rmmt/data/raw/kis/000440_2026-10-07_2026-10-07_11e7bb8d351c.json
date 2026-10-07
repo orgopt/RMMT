@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T14:01:37.986509+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "80",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "0.65",
+      "stck_prdy_clpr": "12320",
+      "acml_vol": "12210",
+      "acml_tr_pbmn": "151790880",
+      "hts_kor_isnm": "중앙에너비스",
+      "stck_prpr": "12400",
+      "stck_shrn_iscd": "000440",
+      "prdy_vol": "12462",
+      "stck_mxpr": "16010",
+      "stck_llam": "8630",
+      "stck_oprc": "12330",
+      "stck_hgpr": "12550",
+      "stck_lwpr": "12120",
+      "stck_prdy_oprc": "12560",
+      "stck_prdy_hgpr": "12570",
+      "stck_prdy_lwpr": "12250",
+      "askp": "12500",
+      "bidp": "12350",
+      "prdy_vrss_vol": "-252",
+      "vol_tnrt": "0.20",
+      "stck_fcam": "500",
+      "lstn_stcn": "6227130",
+      "cpfn": "31",
+      "hts_avls": "772",
+      "per": "-69.27",
+      "eps": "-179.00",
+      "pbr": "1.06",
+      "itewhol_loan_rmnd_ratem name": "0.37"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "12400",
+        "stck_oprc": "12330",
+        "stck_hgpr": "12550",
+        "stck_lwpr": "12120",
+        "acml_vol": "12210",
+        "acml_tr_pbmn": "151790880",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "80",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

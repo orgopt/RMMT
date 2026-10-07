@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:22.313009+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-140",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-5.39",
+      "stck_prdy_clpr": "2595",
+      "acml_vol": "888642",
+      "acml_tr_pbmn": "2224837190",
+      "hts_kor_isnm": "모베이스전자",
+      "stck_prpr": "2455",
+      "stck_shrn_iscd": "012860",
+      "prdy_vol": "2318998",
+      "stck_mxpr": "3370",
+      "stck_llam": "1820",
+      "stck_oprc": "2560",
+      "stck_hgpr": "2585",
+      "stck_lwpr": "2440",
+      "stck_prdy_oprc": "2500",
+      "stck_prdy_hgpr": "2750",
+      "stck_prdy_lwpr": "2490",
+      "askp": "2465",
+      "bidp": "2455",
+      "prdy_vrss_vol": "-1430356",
+      "vol_tnrt": "1.21",
+      "stck_fcam": "500",
+      "lstn_stcn": "73233457",
+      "cpfn": "366",
+      "hts_avls": "1798",
+      "per": "9.03",
+      "eps": "272.00",
+      "pbr": "0.73",
+      "itewhol_loan_rmnd_ratem name": "0.77"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "2455",
+        "stck_oprc": "2560",
+        "stck_hgpr": "2585",
+        "stck_lwpr": "2440",
+        "acml_vol": "888642",
+        "acml_tr_pbmn": "2224837190",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-140",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

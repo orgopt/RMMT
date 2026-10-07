@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:27.399836+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-50",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-0.94",
+      "stck_prdy_clpr": "5300",
+      "acml_vol": "200423",
+      "acml_tr_pbmn": "1057255485",
+      "hts_kor_isnm": "아가방컴퍼니",
+      "stck_prpr": "5250",
+      "stck_shrn_iscd": "013990",
+      "prdy_vol": "169487",
+      "stck_mxpr": "6890",
+      "stck_llam": "3710",
+      "stck_oprc": "5240",
+      "stck_hgpr": "5350",
+      "stck_lwpr": "5200",
+      "stck_prdy_oprc": "5210",
+      "stck_prdy_hgpr": "5310",
+      "stck_prdy_lwpr": "5180",
+      "askp": "5270",
+      "bidp": "5250",
+      "prdy_vrss_vol": "30936",
+      "vol_tnrt": "0.61",
+      "stck_fcam": "500",
+      "lstn_stcn": "32887536",
+      "cpfn": "164",
+      "hts_avls": "1727",
+      "per": "14.96",
+      "eps": "351.00",
+      "pbr": "0.81",
+      "itewhol_loan_rmnd_ratem name": "1.59"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "5250",
+        "stck_oprc": "5240",
+        "stck_hgpr": "5350",
+        "stck_lwpr": "5200",
+        "acml_vol": "200423",
+        "acml_tr_pbmn": "1057255485",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-50",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

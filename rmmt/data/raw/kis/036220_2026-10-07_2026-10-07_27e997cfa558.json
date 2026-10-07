@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:36.999253+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "280",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "4.34",
+      "stck_prdy_clpr": "6450",
+      "acml_vol": "328313",
+      "acml_tr_pbmn": "2270698970",
+      "hts_kor_isnm": "오상헬스케어",
+      "stck_prpr": "6730",
+      "stck_shrn_iscd": "036220",
+      "prdy_vol": "19157",
+      "stck_mxpr": "8380",
+      "stck_llam": "4520",
+      "stck_oprc": "6450",
+      "stck_hgpr": "7330",
+      "stck_lwpr": "6450",
+      "stck_prdy_oprc": "6450",
+      "stck_prdy_hgpr": "6500",
+      "stck_prdy_lwpr": "6360",
+      "askp": "6770",
+      "bidp": "6730",
+      "prdy_vrss_vol": "309156",
+      "vol_tnrt": "2.29",
+      "stck_fcam": "500",
+      "lstn_stcn": "14309416",
+      "cpfn": "73",
+      "hts_avls": "963",
+      "per": "31.45",
+      "eps": "214.00",
+      "pbr": "0.33",
+      "itewhol_loan_rmnd_ratem name": "1.17"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "6730",
+        "stck_oprc": "6450",
+        "stck_hgpr": "7330",
+        "stck_lwpr": "6450",
+        "acml_vol": "328313",
+        "acml_tr_pbmn": "2270698970",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "280",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T14:01:41.078182+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-50",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-0.19",
+      "stck_prdy_clpr": "25800",
+      "acml_vol": "108074",
+      "acml_tr_pbmn": "2802713575",
+      "hts_kor_isnm": "에임드바이오",
+      "stck_prpr": "25750",
+      "stck_shrn_iscd": "0009K0",
+      "prdy_vol": "157625",
+      "stck_mxpr": "33500",
+      "stck_llam": "18100",
+      "stck_oprc": "26150",
+      "stck_hgpr": "26450",
+      "stck_lwpr": "25250",
+      "stck_prdy_oprc": "25200",
+      "stck_prdy_hgpr": "26450",
+      "stck_prdy_lwpr": "25100",
+      "askp": "25750",
+      "bidp": "25600",
+      "prdy_vrss_vol": "-49551",
+      "vol_tnrt": "0.17",
+      "stck_fcam": "500",
+      "lstn_stcn": "65137661",
+      "cpfn": "326",
+      "hts_avls": "16773",
+      "per": "279.89",
+      "eps": "92.00",
+      "pbr": "8.58",
+      "itewhol_loan_rmnd_ratem name": "0.72"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "25750",
+        "stck_oprc": "26150",
+        "stck_hgpr": "26450",
+        "stck_lwpr": "25250",
+        "acml_vol": "108074",
+        "acml_tr_pbmn": "2802713575",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-50",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

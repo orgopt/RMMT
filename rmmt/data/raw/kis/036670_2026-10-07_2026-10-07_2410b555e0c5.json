@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:39.940216+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "40",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "0.80",
+      "stck_prdy_clpr": "5030",
+      "acml_vol": "24490",
+      "acml_tr_pbmn": "122702980",
+      "hts_kor_isnm": "삼양케이씨아이",
+      "stck_prpr": "5070",
+      "stck_shrn_iscd": "036670",
+      "prdy_vol": "11789",
+      "stck_mxpr": "6530",
+      "stck_llam": "3530",
+      "stck_oprc": "5030",
+      "stck_hgpr": "5070",
+      "stck_lwpr": "5000",
+      "stck_prdy_oprc": "5060",
+      "stck_prdy_hgpr": "5140",
+      "stck_prdy_lwpr": "5000",
+      "askp": "5070",
+      "bidp": "5010",
+      "prdy_vrss_vol": "12701",
+      "vol_tnrt": "0.23",
+      "stck_fcam": "500",
+      "lstn_stcn": "10760200",
+      "cpfn": "56",
+      "hts_avls": "546",
+      "per": "3.88",
+      "eps": "1306.00",
+      "pbr": "0.47",
+      "itewhol_loan_rmnd_ratem name": "1.52"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "5070",
+        "stck_oprc": "5030",
+        "stck_hgpr": "5070",
+        "stck_lwpr": "5000",
+        "acml_vol": "24490",
+        "acml_tr_pbmn": "122702980",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "40",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

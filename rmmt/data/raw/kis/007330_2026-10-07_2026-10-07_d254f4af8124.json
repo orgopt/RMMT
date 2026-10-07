@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:02.938190+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "20",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "0.20",
+      "stck_prdy_clpr": "9970",
+      "acml_vol": "6259",
+      "acml_tr_pbmn": "62282110",
+      "hts_kor_isnm": "푸른저축은행",
+      "stck_prpr": "9990",
+      "stck_shrn_iscd": "007330",
+      "prdy_vol": "12119",
+      "stck_mxpr": "12960",
+      "stck_llam": "6980",
+      "stck_oprc": "10090",
+      "stck_hgpr": "10090",
+      "stck_lwpr": "9940",
+      "stck_prdy_oprc": "9970",
+      "stck_prdy_hgpr": "10040",
+      "stck_prdy_lwpr": "9880",
+      "askp": "9990",
+      "bidp": "9960",
+      "prdy_vrss_vol": "-5860",
+      "vol_tnrt": "0.04",
+      "stck_fcam": "1000",
+      "lstn_stcn": "15082800",
+      "cpfn": "151",
+      "hts_avls": "1507",
+      "per": "0.00",
+      "eps": "0.00",
+      "pbr": "0.00",
+      "itewhol_loan_rmnd_ratem name": "0.00"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "9990",
+        "stck_oprc": "10090",
+        "stck_hgpr": "10090",
+        "stck_lwpr": "9940",
+        "acml_vol": "6259",
+        "acml_tr_pbmn": "62282110",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "20",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

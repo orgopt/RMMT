@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:12.182708+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-130",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-1.69",
+      "stck_prdy_clpr": "7670",
+      "acml_vol": "17836",
+      "acml_tr_pbmn": "132602330",
+      "hts_kor_isnm": "엠에스씨",
+      "stck_prpr": "7540",
+      "stck_shrn_iscd": "009780",
+      "prdy_vol": "46956",
+      "stck_mxpr": "9970",
+      "stck_llam": "5370",
+      "stck_oprc": "7670",
+      "stck_hgpr": "7670",
+      "stck_lwpr": "7270",
+      "stck_prdy_oprc": "7480",
+      "stck_prdy_hgpr": "7700",
+      "stck_prdy_lwpr": "7420",
+      "askp": "7540",
+      "bidp": "7490",
+      "prdy_vrss_vol": "-29120",
+      "vol_tnrt": "0.10",
+      "stck_fcam": "500",
+      "lstn_stcn": "17600000",
+      "cpfn": "88",
+      "hts_avls": "1327",
+      "per": "5.77",
+      "eps": "1307.00",
+      "pbr": "0.70",
+      "itewhol_loan_rmnd_ratem name": "0.68"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "7540",
+        "stck_oprc": "7670",
+        "stck_hgpr": "7670",
+        "stck_lwpr": "7270",
+        "acml_vol": "17836",
+        "acml_tr_pbmn": "132602330",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-130",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

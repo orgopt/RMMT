@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:36.140521+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "100",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "0.30",
+      "stck_prdy_clpr": "33400",
+      "acml_vol": "4551",
+      "acml_tr_pbmn": "152372225",
+      "hts_kor_isnm": "금화피에스시",
+      "stck_prpr": "33500",
+      "stck_shrn_iscd": "036190",
+      "prdy_vol": "5408",
+      "stck_mxpr": "43400",
+      "stck_llam": "23400",
+      "stck_oprc": "33500",
+      "stck_hgpr": "33800",
+      "stck_lwpr": "33250",
+      "stck_prdy_oprc": "34700",
+      "stck_prdy_hgpr": "34700",
+      "stck_prdy_lwpr": "33200",
+      "askp": "33500",
+      "bidp": "33450",
+      "prdy_vrss_vol": "-857",
+      "vol_tnrt": "0.08",
+      "stck_fcam": "500",
+      "lstn_stcn": "6000000",
+      "cpfn": "30",
+      "hts_avls": "2010",
+      "per": "6.57",
+      "eps": "5099.00",
+      "pbr": "0.51",
+      "itewhol_loan_rmnd_ratem name": "0.11"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "33500",
+        "stck_oprc": "33500",
+        "stck_hgpr": "33800",
+        "stck_lwpr": "33250",
+        "acml_vol": "4551",
+        "acml_tr_pbmn": "152372225",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "100",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

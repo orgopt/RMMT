@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:01.247695+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-330",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-4.37",
+      "stck_prdy_clpr": "7550",
+      "acml_vol": "865479",
+      "acml_tr_pbmn": "6417830070",
+      "hts_kor_isnm": "보성파워텍",
+      "stck_prpr": "7220",
+      "stck_shrn_iscd": "006910",
+      "prdy_vol": "707698",
+      "stck_mxpr": "9810",
+      "stck_llam": "5290",
+      "stck_oprc": "7720",
+      "stck_hgpr": "7720",
+      "stck_lwpr": "7000",
+      "stck_prdy_oprc": "7460",
+      "stck_prdy_hgpr": "7550",
+      "stck_prdy_lwpr": "7350",
+      "askp": "7200",
+      "bidp": "7180",
+      "prdy_vrss_vol": "157781",
+      "vol_tnrt": "1.76",
+      "stck_fcam": "500",
+      "lstn_stcn": "49129824",
+      "cpfn": "246",
+      "hts_avls": "3547",
+      "per": "59.67",
+      "eps": "121.00",
+      "pbr": "3.92",
+      "itewhol_loan_rmnd_ratem name": "5.55"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "7220",
+        "stck_oprc": "7720",
+        "stck_hgpr": "7720",
+        "stck_lwpr": "7000",
+        "acml_vol": "865479",
+        "acml_tr_pbmn": "6417830070",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-330",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

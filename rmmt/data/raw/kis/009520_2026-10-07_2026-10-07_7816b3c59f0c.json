@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:10.086708+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-340",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-2.52",
+      "stck_prdy_clpr": "13480",
+      "acml_vol": "128768",
+      "acml_tr_pbmn": "1714187010",
+      "hts_kor_isnm": "포스코엠텍",
+      "stck_prpr": "13140",
+      "stck_shrn_iscd": "009520",
+      "prdy_vol": "197519",
+      "stck_mxpr": "17520",
+      "stck_llam": "9440",
+      "stck_oprc": "13410",
+      "stck_hgpr": "13490",
+      "stck_lwpr": "13140",
+      "stck_prdy_oprc": "13260",
+      "stck_prdy_hgpr": "13480",
+      "stck_prdy_lwpr": "13100",
+      "askp": "13190",
+      "bidp": "13140",
+      "prdy_vrss_vol": "-68751",
+      "vol_tnrt": "0.31",
+      "stck_fcam": "500",
+      "lstn_stcn": "41642703",
+      "cpfn": "208",
+      "hts_avls": "5472",
+      "per": "938.57",
+      "eps": "14.00",
+      "pbr": "4.89",
+      "itewhol_loan_rmnd_ratem name": "2.48"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "13140",
+        "stck_oprc": "13410",
+        "stck_hgpr": "13490",
+        "stck_lwpr": "13140",
+        "acml_vol": "128768",
+        "acml_tr_pbmn": "1714187010",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-340",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

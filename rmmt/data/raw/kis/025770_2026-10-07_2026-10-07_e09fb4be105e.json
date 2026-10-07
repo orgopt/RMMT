@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:01.143178+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-30",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-0.38",
+      "stck_prdy_clpr": "7870",
+      "acml_vol": "10544",
+      "acml_tr_pbmn": "82602800",
+      "hts_kor_isnm": "한국정보통신",
+      "stck_prpr": "7840",
+      "stck_shrn_iscd": "025770",
+      "prdy_vol": "44116",
+      "stck_mxpr": "10230",
+      "stck_llam": "5510",
+      "stck_oprc": "7800",
+      "stck_hgpr": "8100",
+      "stck_lwpr": "7790",
+      "stck_prdy_oprc": "7900",
+      "stck_prdy_hgpr": "8050",
+      "stck_prdy_lwpr": "7800",
+      "askp": "7840",
+      "bidp": "7830",
+      "prdy_vrss_vol": "-33572",
+      "vol_tnrt": "0.03",
+      "stck_fcam": "500",
+      "lstn_stcn": "37444271",
+      "cpfn": "194",
+      "hts_avls": "2936",
+      "per": "8.02",
+      "eps": "978.00",
+      "pbr": "0.82",
+      "itewhol_loan_rmnd_ratem name": "0.52"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "7840",
+        "stck_oprc": "7800",
+        "stck_hgpr": "8100",
+        "stck_lwpr": "7790",
+        "acml_vol": "10544",
+        "acml_tr_pbmn": "82602800",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-30",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

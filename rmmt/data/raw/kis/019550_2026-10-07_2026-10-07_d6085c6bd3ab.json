@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:43.847452+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "4",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "0.44",
+      "stck_prdy_clpr": "910",
+      "acml_vol": "100333",
+      "acml_tr_pbmn": "91487877",
+      "hts_kor_isnm": "SBI인베스트먼트",
+      "stck_prpr": "914",
+      "stck_shrn_iscd": "019550",
+      "prdy_vol": "293773",
+      "stck_mxpr": "1183",
+      "stck_llam": "637",
+      "stck_oprc": "915",
+      "stck_hgpr": "1000",
+      "stck_lwpr": "907",
+      "stck_prdy_oprc": "926",
+      "stck_prdy_hgpr": "928",
+      "stck_prdy_lwpr": "904",
+      "askp": "914",
+      "bidp": "910",
+      "prdy_vrss_vol": "-193440",
+      "vol_tnrt": "0.12",
+      "stck_fcam": "1000",
+      "lstn_stcn": "80562974",
+      "cpfn": "835",
+      "hts_avls": "736",
+      "per": "13.06",
+      "eps": "70.00",
+      "pbr": "1.07",
+      "itewhol_loan_rmnd_ratem name": "0.16"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "914",
+        "stck_oprc": "915",
+        "stck_hgpr": "1000",
+        "stck_lwpr": "907",
+        "acml_vol": "100333",
+        "acml_tr_pbmn": "91487877",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "4",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

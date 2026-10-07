@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:28.606218+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "1000",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "0.98",
+      "stck_prdy_clpr": "102400",
+      "acml_vol": "1153",
+      "acml_tr_pbmn": "118689300",
+      "hts_kor_isnm": "한국기업평가",
+      "stck_prpr": "103400",
+      "stck_shrn_iscd": "034950",
+      "prdy_vol": "1017",
+      "stck_mxpr": "133100",
+      "stck_llam": "71700",
+      "stck_oprc": "103600",
+      "stck_hgpr": "103600",
+      "stck_lwpr": "102500",
+      "stck_prdy_oprc": "104500",
+      "stck_prdy_hgpr": "104500",
+      "stck_prdy_lwpr": "102100",
+      "askp": "103400",
+      "bidp": "102100",
+      "prdy_vrss_vol": "136",
+      "vol_tnrt": "0.03",
+      "stck_fcam": "5000",
+      "lstn_stcn": "4540514",
+      "cpfn": "245",
+      "hts_avls": "4695",
+      "per": "18.61",
+      "eps": "5556.00",
+      "pbr": "3.49",
+      "itewhol_loan_rmnd_ratem name": "0.01"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "103400",
+        "stck_oprc": "103600",
+        "stck_hgpr": "103600",
+        "stck_lwpr": "102500",
+        "acml_vol": "1153",
+        "acml_tr_pbmn": "118689300",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "1000",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

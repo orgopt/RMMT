@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:57:47.604513+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "0",
+      "prdy_vrss_sign": "3",
+      "prdy_ctrt": "0.00",
+      "stck_prdy_clpr": "2215",
+      "acml_vol": "0",
+      "acml_tr_pbmn": "0",
+      "hts_kor_isnm": "이화공영",
+      "stck_prpr": "2215",
+      "stck_shrn_iscd": "001840",
+      "prdy_vol": "0",
+      "stck_mxpr": "3325",
+      "stck_llam": "1107",
+      "stck_oprc": "0",
+      "stck_hgpr": "0",
+      "stck_lwpr": "0",
+      "stck_prdy_oprc": "2215",
+      "stck_prdy_hgpr": "2215",
+      "stck_prdy_lwpr": "2215",
+      "askp": "0",
+      "bidp": "0",
+      "prdy_vrss_vol": "0",
+      "vol_tnrt": "0.00",
+      "stck_fcam": "500",
+      "lstn_stcn": "28256809",
+      "cpfn": "141",
+      "hts_avls": "626",
+      "per": "0.00",
+      "eps": "0.00",
+      "pbr": "0.00",
+      "itewhol_loan_rmnd_ratem name": "0.00"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "2215",
+        "stck_oprc": "2215",
+        "stck_hgpr": "2215",
+        "stck_lwpr": "2215",
+        "acml_vol": "0",
+        "acml_tr_pbmn": "0",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "Y",
+        "prdy_vrss_sign": "3",
+        "prdy_vrss": "0",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

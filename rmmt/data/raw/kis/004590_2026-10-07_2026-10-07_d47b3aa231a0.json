@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:57:54.352954+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "100",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "1.91",
+      "stck_prdy_clpr": "5240",
+      "acml_vol": "19660",
+      "acml_tr_pbmn": "104787480",
+      "hts_kor_isnm": "한국가구",
+      "stck_prpr": "5340",
+      "stck_shrn_iscd": "004590",
+      "prdy_vol": "19283",
+      "stck_mxpr": "6810",
+      "stck_llam": "3670",
+      "stck_oprc": "5240",
+      "stck_hgpr": "5410",
+      "stck_lwpr": "5240",
+      "stck_prdy_oprc": "5260",
+      "stck_prdy_hgpr": "5270",
+      "stck_prdy_lwpr": "5210",
+      "askp": "5340",
+      "bidp": "5280",
+      "prdy_vrss_vol": "377",
+      "vol_tnrt": "0.13",
+      "stck_fcam": "100",
+      "lstn_stcn": "15000000",
+      "cpfn": "15",
+      "hts_avls": "801",
+      "per": "5.61",
+      "eps": "952.00",
+      "pbr": "0.41",
+      "itewhol_loan_rmnd_ratem name": "0.37"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "5340",
+        "stck_oprc": "5240",
+        "stck_hgpr": "5410",
+        "stck_lwpr": "5240",
+        "acml_vol": "19660",
+        "acml_tr_pbmn": "104787480",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "100",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

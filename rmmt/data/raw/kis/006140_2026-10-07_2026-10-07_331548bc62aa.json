@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:57:59.069118+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-120",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-2.04",
+      "stck_prdy_clpr": "5870",
+      "acml_vol": "485145",
+      "acml_tr_pbmn": "2813582640",
+      "hts_kor_isnm": "피제이전자",
+      "stck_prpr": "5750",
+      "stck_shrn_iscd": "006140",
+      "prdy_vol": "2694080",
+      "stck_mxpr": "7630",
+      "stck_llam": "4110",
+      "stck_oprc": "5960",
+      "stck_hgpr": "6010",
+      "stck_lwpr": "5600",
+      "stck_prdy_oprc": "5800",
+      "stck_prdy_hgpr": "6370",
+      "stck_prdy_lwpr": "5440",
+      "askp": "5750",
+      "bidp": "5730",
+      "prdy_vrss_vol": "-2208935",
+      "vol_tnrt": "3.26",
+      "stck_fcam": "500",
+      "lstn_stcn": "14865000",
+      "cpfn": "75",
+      "hts_avls": "855",
+      "per": "0.00",
+      "eps": "0.00",
+      "pbr": "0.00",
+      "itewhol_loan_rmnd_ratem name": "0.65"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "5750",
+        "stck_oprc": "5960",
+        "stck_hgpr": "6010",
+        "stck_lwpr": "5600",
+        "acml_vol": "485145",
+        "acml_tr_pbmn": "2813582640",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-120",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

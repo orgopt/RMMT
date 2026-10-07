@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:22.194518+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-10",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-0.41",
+      "stck_prdy_clpr": "2445",
+      "acml_vol": "1314",
+      "acml_tr_pbmn": "3188060",
+      "hts_kor_isnm": "모아텍",
+      "stck_prpr": "2435",
+      "stck_shrn_iscd": "033200",
+      "prdy_vol": "3519",
+      "stck_mxpr": "3175",
+      "stck_llam": "1715",
+      "stck_oprc": "2435",
+      "stck_hgpr": "2470",
+      "stck_lwpr": "2400",
+      "stck_prdy_oprc": "2410",
+      "stck_prdy_hgpr": "2445",
+      "stck_prdy_lwpr": "2405",
+      "askp": "2435",
+      "bidp": "2430",
+      "prdy_vrss_vol": "-2205",
+      "vol_tnrt": "0.01",
+      "stck_fcam": "500",
+      "lstn_stcn": "9204529",
+      "cpfn": "77",
+      "hts_avls": "224",
+      "per": "-52.93",
+      "eps": "-46.00",
+      "pbr": "0.33",
+      "itewhol_loan_rmnd_ratem name": "0.00"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "2435",
+        "stck_oprc": "2435",
+        "stck_hgpr": "2470",
+        "stck_lwpr": "2400",
+        "acml_vol": "1314",
+        "acml_tr_pbmn": "3188060",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-10",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:37.847481+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-360",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-3.07",
+      "stck_prdy_clpr": "11730",
+      "acml_vol": "4278435",
+      "acml_tr_pbmn": "48237399800",
+      "hts_kor_isnm": "SFA반도체",
+      "stck_prpr": "11370",
+      "stck_shrn_iscd": "036540",
+      "prdy_vol": "10162577",
+      "stck_mxpr": "15240",
+      "stck_llam": "8220",
+      "stck_oprc": "11620",
+      "stck_hgpr": "11650",
+      "stck_lwpr": "11100",
+      "stck_prdy_oprc": "11490",
+      "stck_prdy_hgpr": "12370",
+      "stck_prdy_lwpr": "11370",
+      "askp": "11370",
+      "bidp": "11350",
+      "prdy_vrss_vol": "-5884142",
+      "vol_tnrt": "2.60",
+      "stck_fcam": "500",
+      "lstn_stcn": "164460303",
+      "cpfn": "825",
+      "hts_avls": "18699",
+      "per": "-98.02",
+      "eps": "-116.00",
+      "pbr": "3.94",
+      "itewhol_loan_rmnd_ratem name": "0.66"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "11370",
+        "stck_oprc": "11620",
+        "stck_hgpr": "11650",
+        "stck_lwpr": "11100",
+        "acml_vol": "4278435",
+        "acml_tr_pbmn": "48237399800",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-360",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:57:45.509914+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-570",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-3.57",
+      "stck_prdy_clpr": "15960",
+      "acml_vol": "78376",
+      "acml_tr_pbmn": "1233950485",
+      "hts_kor_isnm": "그린광학",
+      "stck_prpr": "15390",
+      "stck_shrn_iscd": "0015G0",
+      "prdy_vol": "138233",
+      "stck_mxpr": "20700",
+      "stck_llam": "11180",
+      "stck_oprc": "16100",
+      "stck_hgpr": "16190",
+      "stck_lwpr": "15090",
+      "stck_prdy_oprc": "16940",
+      "stck_prdy_hgpr": "16940",
+      "stck_prdy_lwpr": "15900",
+      "askp": "15390",
+      "bidp": "15370",
+      "prdy_vrss_vol": "-59857",
+      "vol_tnrt": "0.67",
+      "stck_fcam": "500",
+      "lstn_stcn": "11702541",
+      "cpfn": "61",
+      "hts_avls": "1801",
+      "per": "73.99",
+      "eps": "208.00",
+      "pbr": "2.75",
+      "itewhol_loan_rmnd_ratem name": "0.31"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "15390",
+        "stck_oprc": "16100",
+        "stck_hgpr": "16190",
+        "stck_lwpr": "15090",
+        "acml_vol": "78376",
+        "acml_tr_pbmn": "1233950485",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-570",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

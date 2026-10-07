@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:10.485242+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-105",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-2.22",
+      "stck_prdy_clpr": "4740",
+      "acml_vol": "25803",
+      "acml_tr_pbmn": "121892005",
+      "hts_kor_isnm": "삼보산업",
+      "stck_prpr": "4635",
+      "stck_shrn_iscd": "009620",
+      "prdy_vol": "29322",
+      "stck_mxpr": "6160",
+      "stck_llam": "3320",
+      "stck_oprc": "4740",
+      "stck_hgpr": "4850",
+      "stck_lwpr": "4600",
+      "stck_prdy_oprc": "5120",
+      "stck_prdy_hgpr": "5360",
+      "stck_prdy_lwpr": "4710",
+      "askp": "4685",
+      "bidp": "4635",
+      "prdy_vrss_vol": "-3519",
+      "vol_tnrt": "0.74",
+      "stck_fcam": "500",
+      "lstn_stcn": "3494609",
+      "cpfn": "17",
+      "hts_avls": "162",
+      "per": "-2.90",
+      "eps": "-1598.00",
+      "pbr": "12.66",
+      "itewhol_loan_rmnd_ratem name": "0.00"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "4635",
+        "stck_oprc": "4740",
+        "stck_hgpr": "4850",
+        "stck_lwpr": "4600",
+        "acml_vol": "25803",
+        "acml_tr_pbmn": "121892005",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-105",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

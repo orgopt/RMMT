@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:32.808901+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "19",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "1.49",
+      "stck_prdy_clpr": "1279",
+      "acml_vol": "8503",
+      "acml_tr_pbmn": "10929443",
+      "hts_kor_isnm": "리더스코스메틱",
+      "stck_prpr": "1298",
+      "stck_shrn_iscd": "016100",
+      "prdy_vol": "7763",
+      "stck_mxpr": "1662",
+      "stck_llam": "896",
+      "stck_oprc": "1270",
+      "stck_hgpr": "1356",
+      "stck_lwpr": "1261",
+      "stck_prdy_oprc": "1288",
+      "stck_prdy_hgpr": "1288",
+      "stck_prdy_lwpr": "1250",
+      "askp": "1298",
+      "bidp": "1297",
+      "prdy_vrss_vol": "740",
+      "vol_tnrt": "0.04",
+      "stck_fcam": "500",
+      "lstn_stcn": "19100894",
+      "cpfn": "96",
+      "hts_avls": "248",
+      "per": "-2.98",
+      "eps": "-436.00",
+      "pbr": "0.83",
+      "itewhol_loan_rmnd_ratem name": "0.00"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "1298",
+        "stck_oprc": "1270",
+        "stck_hgpr": "1356",
+        "stck_lwpr": "1261",
+        "acml_vol": "8503",
+        "acml_tr_pbmn": "10929443",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "19",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:06.299313+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "190",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "1.48",
+      "stck_prdy_clpr": "12870",
+      "acml_vol": "42960",
+      "acml_tr_pbmn": "564716760",
+      "hts_kor_isnm": "카나프테라퓨틱스",
+      "stck_prpr": "13060",
+      "stck_shrn_iscd": "0082N0",
+      "prdy_vol": "82855",
+      "stck_mxpr": "16730",
+      "stck_llam": "9010",
+      "stck_oprc": "13000",
+      "stck_hgpr": "13400",
+      "stck_lwpr": "12840",
+      "stck_prdy_oprc": "12890",
+      "stck_prdy_hgpr": "13500",
+      "stck_prdy_lwpr": "12710",
+      "askp": "13070",
+      "bidp": "12850",
+      "prdy_vrss_vol": "-39895",
+      "vol_tnrt": "0.32",
+      "stck_fcam": "500",
+      "lstn_stcn": "13300580",
+      "cpfn": "67",
+      "hts_avls": "1737",
+      "per": "0.00",
+      "eps": "0.00",
+      "pbr": "0.00",
+      "itewhol_loan_rmnd_ratem name": "0.28"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "13060",
+        "stck_oprc": "13000",
+        "stck_hgpr": "13400",
+        "stck_lwpr": "12840",
+        "acml_vol": "42960",
+        "acml_tr_pbmn": "564716760",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "190",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

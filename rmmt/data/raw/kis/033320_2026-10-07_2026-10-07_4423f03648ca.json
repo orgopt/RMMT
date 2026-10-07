@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:23.879645+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-75",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-2.34",
+      "stck_prdy_clpr": "3210",
+      "acml_vol": "36139",
+      "acml_tr_pbmn": "113699785",
+      "hts_kor_isnm": "제이씨현시스템",
+      "stck_prpr": "3135",
+      "stck_shrn_iscd": "033320",
+      "prdy_vol": "72195",
+      "stck_mxpr": "4170",
+      "stck_llam": "2250",
+      "stck_oprc": "3210",
+      "stck_hgpr": "3225",
+      "stck_lwpr": "3110",
+      "stck_prdy_oprc": "3155",
+      "stck_prdy_hgpr": "3240",
+      "stck_prdy_lwpr": "3155",
+      "askp": "3135",
+      "bidp": "3120",
+      "prdy_vrss_vol": "-36056",
+      "vol_tnrt": "0.19",
+      "stck_fcam": "500",
+      "lstn_stcn": "19114432",
+      "cpfn": "96",
+      "hts_avls": "599",
+      "per": "6.86",
+      "eps": "457.00",
+      "pbr": "0.51",
+      "itewhol_loan_rmnd_ratem name": "2.96"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "3135",
+        "stck_oprc": "3210",
+        "stck_hgpr": "3225",
+        "stck_lwpr": "3110",
+        "acml_vol": "36139",
+        "acml_tr_pbmn": "113699785",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-75",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

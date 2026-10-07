@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:39.094977+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "310",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "4.01",
+      "stck_prdy_clpr": "7740",
+      "acml_vol": "1969",
+      "acml_tr_pbmn": "15660325",
+      "hts_kor_isnm": "세종텔레콤",
+      "stck_prpr": "8050",
+      "stck_shrn_iscd": "036630",
+      "prdy_vol": "3442",
+      "stck_mxpr": "10060",
+      "stck_llam": "5420",
+      "stck_oprc": "7740",
+      "stck_hgpr": "8780",
+      "stck_lwpr": "7740",
+      "stck_prdy_oprc": "7990",
+      "stck_prdy_hgpr": "7990",
+      "stck_prdy_lwpr": "7700",
+      "askp": "8170",
+      "bidp": "8050",
+      "prdy_vrss_vol": "-1473",
+      "vol_tnrt": "0.01",
+      "stck_fcam": "5000",
+      "lstn_stcn": "14000000",
+      "cpfn": "800",
+      "hts_avls": "1127",
+      "per": "22.18",
+      "eps": "363.00",
+      "pbr": "0.47",
+      "itewhol_loan_rmnd_ratem name": "0.00"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "8050",
+        "stck_oprc": "7740",
+        "stck_hgpr": "8780",
+        "stck_lwpr": "7740",
+        "acml_vol": "1969",
+        "acml_tr_pbmn": "15660325",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "310",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

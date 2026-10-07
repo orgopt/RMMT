@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:34.909898+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "5",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "0.22",
+      "stck_prdy_clpr": "2265",
+      "acml_vol": "48095",
+      "acml_tr_pbmn": "105888765",
+      "hts_kor_isnm": "큐캐피탈",
+      "stck_prpr": "2270",
+      "stck_shrn_iscd": "016600",
+      "prdy_vol": "25624",
+      "stck_mxpr": "2940",
+      "stck_llam": "1590",
+      "stck_oprc": "2265",
+      "stck_hgpr": "2305",
+      "stck_lwpr": "2160",
+      "stck_prdy_oprc": "2275",
+      "stck_prdy_hgpr": "2300",
+      "stck_prdy_lwpr": "2180",
+      "askp": "2240",
+      "bidp": "2220",
+      "prdy_vrss_vol": "22471",
+      "vol_tnrt": "0.34",
+      "stck_fcam": "2500",
+      "lstn_stcn": "13961601",
+      "cpfn": "356",
+      "hts_avls": "317",
+      "per": "227.00",
+      "eps": "10.00",
+      "pbr": "2.89",
+      "itewhol_loan_rmnd_ratem name": "0.19"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "2270",
+        "stck_oprc": "2265",
+        "stck_hgpr": "2305",
+        "stck_lwpr": "2160",
+        "acml_vol": "48095",
+        "acml_tr_pbmn": "105888765",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "5",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

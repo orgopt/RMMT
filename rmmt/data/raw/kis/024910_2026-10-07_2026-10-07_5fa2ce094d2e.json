@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:58.605955+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "21",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "1.40",
+      "stck_prdy_clpr": "1502",
+      "acml_vol": "31148",
+      "acml_tr_pbmn": "46702847",
+      "hts_kor_isnm": "경창산업",
+      "stck_prpr": "1523",
+      "stck_shrn_iscd": "024910",
+      "prdy_vol": "27890",
+      "stck_mxpr": "1952",
+      "stck_llam": "1052",
+      "stck_oprc": "1529",
+      "stck_hgpr": "1529",
+      "stck_lwpr": "1487",
+      "stck_prdy_oprc": "1506",
+      "stck_prdy_hgpr": "1515",
+      "stck_prdy_lwpr": "1502",
+      "askp": "1523",
+      "bidp": "1502",
+      "prdy_vrss_vol": "3258",
+      "vol_tnrt": "0.09",
+      "stck_fcam": "500",
+      "lstn_stcn": "35819005",
+      "cpfn": "179",
+      "hts_avls": "546",
+      "per": "-2.62",
+      "eps": "-582.00",
+      "pbr": "0.49",
+      "itewhol_loan_rmnd_ratem name": "0.42"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "1523",
+        "stck_oprc": "1529",
+        "stck_hgpr": "1529",
+        "stck_lwpr": "1487",
+        "acml_vol": "31148",
+        "acml_tr_pbmn": "46702847",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "21",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

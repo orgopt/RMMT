@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:02.798471+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "110",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "1.10",
+      "stck_prdy_clpr": "10000",
+      "acml_vol": "20060",
+      "acml_tr_pbmn": "201084100",
+      "hts_kor_isnm": "동신건설",
+      "stck_prpr": "10110",
+      "stck_shrn_iscd": "025950",
+      "prdy_vol": "10659",
+      "stck_mxpr": "13000",
+      "stck_llam": "7000",
+      "stck_oprc": "9900",
+      "stck_hgpr": "10240",
+      "stck_lwpr": "9900",
+      "stck_prdy_oprc": "10070",
+      "stck_prdy_hgpr": "10190",
+      "stck_prdy_lwpr": "9920",
+      "askp": "10100",
+      "bidp": "9940",
+      "prdy_vrss_vol": "9401",
+      "vol_tnrt": "0.24",
+      "stck_fcam": "500",
+      "lstn_stcn": "8400000",
+      "cpfn": "42",
+      "hts_avls": "849",
+      "per": "0.00",
+      "eps": "0.00",
+      "pbr": "0.00",
+      "itewhol_loan_rmnd_ratem name": "0.72"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "10110",
+        "stck_oprc": "9900",
+        "stck_hgpr": "10240",
+        "stck_lwpr": "9900",
+        "acml_vol": "20060",
+        "acml_tr_pbmn": "201084100",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "110",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

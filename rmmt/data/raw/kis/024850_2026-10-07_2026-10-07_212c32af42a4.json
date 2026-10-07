@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:57.806855+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "310",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "1.77",
+      "stck_prdy_clpr": "17530",
+      "acml_vol": "340333",
+      "acml_tr_pbmn": "5994984070",
+      "hts_kor_isnm": "HLB이노베이션",
+      "stck_prpr": "17840",
+      "stck_shrn_iscd": "024850",
+      "prdy_vol": "1193686",
+      "stck_mxpr": "22750",
+      "stck_llam": "12280",
+      "stck_oprc": "17110",
+      "stck_hgpr": "18170",
+      "stck_lwpr": "16900",
+      "stck_prdy_oprc": "16370",
+      "stck_prdy_hgpr": "19980",
+      "stck_prdy_lwpr": "16330",
+      "askp": "17850",
+      "bidp": "17840",
+      "prdy_vrss_vol": "-853353",
+      "vol_tnrt": "0.99",
+      "stck_fcam": "2500",
+      "lstn_stcn": "34539971",
+      "cpfn": "863",
+      "hts_avls": "6162",
+      "per": "-15.43",
+      "eps": "-1156.00",
+      "pbr": "2.45",
+      "itewhol_loan_rmnd_ratem name": "0.31"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "17840",
+        "stck_oprc": "17110",
+        "stck_hgpr": "18170",
+        "stck_lwpr": "16900",
+        "acml_vol": "340333",
+        "acml_tr_pbmn": "5994984070",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "310",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:28.214970+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "150",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "5.91",
+      "stck_prdy_clpr": "2540",
+      "acml_vol": "109365",
+      "acml_tr_pbmn": "292068642",
+      "hts_kor_isnm": "조아제약",
+      "stck_prpr": "2690",
+      "stck_shrn_iscd": "034940",
+      "prdy_vol": "100336",
+      "stck_mxpr": "3300",
+      "stck_llam": "1780",
+      "stck_oprc": "2540",
+      "stck_hgpr": "2785",
+      "stck_lwpr": "2540",
+      "stck_prdy_oprc": "2655",
+      "stck_prdy_hgpr": "2655",
+      "stck_prdy_lwpr": "2520",
+      "askp": "2690",
+      "bidp": "2665",
+      "prdy_vrss_vol": "9029",
+      "vol_tnrt": "1.77",
+      "stck_fcam": "2500",
+      "lstn_stcn": "6195965",
+      "cpfn": "155",
+      "hts_avls": "167",
+      "per": "-2.45",
+      "eps": "-1098.00",
+      "pbr": "0.67",
+      "itewhol_loan_rmnd_ratem name": "0.00"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "2690",
+        "stck_oprc": "2540",
+        "stck_hgpr": "2785",
+        "stck_lwpr": "2540",
+        "acml_vol": "109365",
+        "acml_tr_pbmn": "292068642",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "150",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:25.673352+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-10",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-0.43",
+      "stck_prdy_clpr": "2335",
+      "acml_vol": "52670",
+      "acml_tr_pbmn": "122751015",
+      "hts_kor_isnm": "아진산업",
+      "stck_prpr": "2325",
+      "stck_shrn_iscd": "013310",
+      "prdy_vol": "96558",
+      "stck_mxpr": "3035",
+      "stck_llam": "1635",
+      "stck_oprc": "2340",
+      "stck_hgpr": "2365",
+      "stck_lwpr": "2300",
+      "stck_prdy_oprc": "2330",
+      "stck_prdy_hgpr": "2350",
+      "stck_prdy_lwpr": "2315",
+      "askp": "2320",
+      "bidp": "2305",
+      "prdy_vrss_vol": "-43888",
+      "vol_tnrt": "0.14",
+      "stck_fcam": "500",
+      "lstn_stcn": "38806582",
+      "cpfn": "194",
+      "hts_avls": "902",
+      "per": "3.89",
+      "eps": "598.00",
+      "pbr": "0.26",
+      "itewhol_loan_rmnd_ratem name": "1.92"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "2325",
+        "stck_oprc": "2340",
+        "stck_hgpr": "2365",
+        "stck_lwpr": "2300",
+        "acml_vol": "52670",
+        "acml_tr_pbmn": "122751015",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-10",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

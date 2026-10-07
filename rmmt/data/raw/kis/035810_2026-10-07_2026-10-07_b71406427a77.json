@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:32.409512+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "10",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "0.22",
+      "stck_prdy_clpr": "4460",
+      "acml_vol": "133410",
+      "acml_tr_pbmn": "597702012",
+      "hts_kor_isnm": "이지홀딩스",
+      "stck_prpr": "4470",
+      "stck_shrn_iscd": "035810",
+      "prdy_vol": "150732",
+      "stck_mxpr": "5790",
+      "stck_llam": "3125",
+      "stck_oprc": "4470",
+      "stck_hgpr": "4530",
+      "stck_lwpr": "4440",
+      "stck_prdy_oprc": "4540",
+      "stck_prdy_hgpr": "4565",
+      "stck_prdy_lwpr": "4435",
+      "askp": "4470",
+      "bidp": "4465",
+      "prdy_vrss_vol": "-17322",
+      "vol_tnrt": "0.21",
+      "stck_fcam": "500",
+      "lstn_stcn": "64516185",
+      "cpfn": "329",
+      "hts_avls": "2884",
+      "per": "10.80",
+      "eps": "414.00",
+      "pbr": "0.41",
+      "itewhol_loan_rmnd_ratem name": "2.40"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "4470",
+        "stck_oprc": "4470",
+        "stck_hgpr": "4530",
+        "stck_lwpr": "4440",
+        "acml_vol": "133410",
+        "acml_tr_pbmn": "597702012",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "10",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

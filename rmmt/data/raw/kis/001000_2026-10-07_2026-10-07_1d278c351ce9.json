@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T14:01:41.619385+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-50",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-2.81",
+      "stck_prdy_clpr": "1779",
+      "acml_vol": "16051",
+      "acml_tr_pbmn": "27567052",
+      "hts_kor_isnm": "신라섬유",
+      "stck_prpr": "1729",
+      "stck_shrn_iscd": "001000",
+      "prdy_vol": "23202",
+      "stck_mxpr": "2310",
+      "stck_llam": "1246",
+      "stck_oprc": "1784",
+      "stck_hgpr": "1784",
+      "stck_lwpr": "1680",
+      "stck_prdy_oprc": "1700",
+      "stck_prdy_hgpr": "1812",
+      "stck_prdy_lwpr": "1700",
+      "askp": "1733",
+      "bidp": "1728",
+      "prdy_vrss_vol": "-7151",
+      "vol_tnrt": "0.33",
+      "stck_fcam": "500",
+      "lstn_stcn": "4855508",
+      "cpfn": "24",
+      "hts_avls": "84",
+      "per": "-144.08",
+      "eps": "-12.00",
+      "pbr": "2.92",
+      "itewhol_loan_rmnd_ratem name": "0.34"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "1729",
+        "stck_oprc": "1784",
+        "stck_hgpr": "1784",
+        "stck_lwpr": "1680",
+        "acml_vol": "16051",
+        "acml_tr_pbmn": "27567052",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-50",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

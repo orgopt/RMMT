@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:57:56.971071+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-10",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-0.16",
+      "stck_prdy_clpr": "6160",
+      "acml_vol": "2728",
+      "acml_tr_pbmn": "16744500",
+      "hts_kor_isnm": "푸드웰",
+      "stck_prpr": "6150",
+      "stck_shrn_iscd": "005670",
+      "prdy_vol": "3247",
+      "stck_mxpr": "8000",
+      "stck_llam": "4320",
+      "stck_oprc": "6190",
+      "stck_hgpr": "6190",
+      "stck_lwpr": "6110",
+      "stck_prdy_oprc": "6220",
+      "stck_prdy_hgpr": "6220",
+      "stck_prdy_lwpr": "6130",
+      "askp": "6190",
+      "bidp": "6150",
+      "prdy_vrss_vol": "-519",
+      "vol_tnrt": "0.03",
+      "stck_fcam": "500",
+      "lstn_stcn": "10000000",
+      "cpfn": "50",
+      "hts_avls": "615",
+      "per": "6.14",
+      "eps": "1002.00",
+      "pbr": "0.56",
+      "itewhol_loan_rmnd_ratem name": "1.78"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "6150",
+        "stck_oprc": "6190",
+        "stck_hgpr": "6190",
+        "stck_lwpr": "6110",
+        "acml_vol": "2728",
+        "acml_tr_pbmn": "16744500",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-10",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

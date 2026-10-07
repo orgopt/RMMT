@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:14.280043+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-810",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-4.37",
+      "stck_prdy_clpr": "18530",
+      "acml_vol": "16404602",
+      "acml_tr_pbmn": "306748050740",
+      "hts_kor_isnm": "대한광통신",
+      "stck_prpr": "17720",
+      "stck_shrn_iscd": "010170",
+      "prdy_vol": "14208062",
+      "stck_mxpr": "24050",
+      "stck_llam": "12980",
+      "stck_oprc": "18950",
+      "stck_hgpr": "19870",
+      "stck_lwpr": "17580",
+      "stck_prdy_oprc": "18040",
+      "stck_prdy_hgpr": "18880",
+      "stck_prdy_lwpr": "17950",
+      "askp": "17720",
+      "bidp": "17710",
+      "prdy_vrss_vol": "2196540",
+      "vol_tnrt": "10.55",
+      "stck_fcam": "500",
+      "lstn_stcn": "155485660",
+      "cpfn": "777",
+      "hts_avls": "27552",
+      "per": "-73.22",
+      "eps": "-242.00",
+      "pbr": "36.09",
+      "itewhol_loan_rmnd_ratem name": "0.00"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "17720",
+        "stck_oprc": "18950",
+        "stck_hgpr": "19870",
+        "stck_lwpr": "17580",
+        "acml_vol": "16404602",
+        "acml_tr_pbmn": "306748050740",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-810",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

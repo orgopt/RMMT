@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:56.508525+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-130",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-2.97",
+      "stck_prdy_clpr": "4370",
+      "acml_vol": "13703",
+      "acml_tr_pbmn": "58216095",
+      "hts_kor_isnm": "유성티엔에스",
+      "stck_prpr": "4240",
+      "stck_shrn_iscd": "024800",
+      "prdy_vol": "131705",
+      "stck_mxpr": "5680",
+      "stck_llam": "3060",
+      "stck_oprc": "4290",
+      "stck_hgpr": "4345",
+      "stck_lwpr": "4130",
+      "stck_prdy_oprc": "4370",
+      "stck_prdy_hgpr": "4445",
+      "stck_prdy_lwpr": "4110",
+      "askp": "4240",
+      "bidp": "4235",
+      "prdy_vrss_vol": "-118002",
+      "vol_tnrt": "0.04",
+      "stck_fcam": "500",
+      "lstn_stcn": "35225370",
+      "cpfn": "185",
+      "hts_avls": "1494",
+      "per": "2.86",
+      "eps": "1480.00",
+      "pbr": "0.27",
+      "itewhol_loan_rmnd_ratem name": "1.16"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "4240",
+        "stck_oprc": "4290",
+        "stck_hgpr": "4345",
+        "stck_lwpr": "4130",
+        "acml_vol": "13703",
+        "acml_tr_pbmn": "58216095",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-130",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

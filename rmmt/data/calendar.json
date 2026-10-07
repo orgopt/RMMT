@@ -1,0 +1,1453 @@
+{
+  "schema_version": 1,
+  "source": "KIS chk-holiday",
+  "calendar_complete": true,
+  "start": "2026-06-09",
+  "end": "2026-11-21",
+  "retrieved_at": "2026-10-07T01:40:48.360504+00:00",
+  "sessions": [
+    "2026-06-09",
+    "2026-06-10",
+    "2026-06-11",
+    "2026-06-12",
+    "2026-06-15",
+    "2026-06-16",
+    "2026-06-17",
+    "2026-06-18",
+    "2026-06-19",
+    "2026-06-22",
+    "2026-06-23",
+    "2026-06-24",
+    "2026-06-25",
+    "2026-06-26",
+    "2026-06-29",
+    "2026-06-30",
+    "2026-07-01",
+    "2026-07-02",
+    "2026-07-03",
+    "2026-07-06",
+    "2026-07-07",
+    "2026-07-08",
+    "2026-07-09",
+    "2026-07-10",
+    "2026-07-13",
+    "2026-07-14",
+    "2026-07-15",
+    "2026-07-16",
+    "2026-07-20",
+    "2026-07-21",
+    "2026-07-22",
+    "2026-07-23",
+    "2026-07-24",
+    "2026-07-27",
+    "2026-07-28",
+    "2026-07-29",
+    "2026-07-30",
+    "2026-07-31",
+    "2026-08-03",
+    "2026-08-04",
+    "2026-08-05",
+    "2026-08-06",
+    "2026-08-07",
+    "2026-08-10",
+    "2026-08-11",
+    "2026-08-12",
+    "2026-08-13",
+    "2026-08-14",
+    "2026-08-18",
+    "2026-08-19",
+    "2026-08-20",
+    "2026-08-21",
+    "2026-08-24",
+    "2026-08-25",
+    "2026-08-26",
+    "2026-08-27",
+    "2026-08-28",
+    "2026-08-31",
+    "2026-09-01",
+    "2026-09-02",
+    "2026-09-03",
+    "2026-09-04",
+    "2026-09-07",
+    "2026-09-08",
+    "2026-09-09",
+    "2026-09-10",
+    "2026-09-11",
+    "2026-09-14",
+    "2026-09-15",
+    "2026-09-16",
+    "2026-09-17",
+    "2026-09-18",
+    "2026-09-21",
+    "2026-09-22",
+    "2026-09-23",
+    "2026-09-28",
+    "2026-09-29",
+    "2026-09-30",
+    "2026-10-01",
+    "2026-10-02",
+    "2026-10-06",
+    "2026-10-07",
+    "2026-10-08",
+    "2026-10-12",
+    "2026-10-13",
+    "2026-10-14",
+    "2026-10-15",
+    "2026-10-16",
+    "2026-10-19",
+    "2026-10-20",
+    "2026-10-21",
+    "2026-10-22",
+    "2026-10-23",
+    "2026-10-26",
+    "2026-10-27",
+    "2026-10-28",
+    "2026-10-29",
+    "2026-10-30",
+    "2026-11-02",
+    "2026-11-03",
+    "2026-11-04",
+    "2026-11-05",
+    "2026-11-06",
+    "2026-11-09",
+    "2026-11-10",
+    "2026-11-11",
+    "2026-11-12",
+    "2026-11-13",
+    "2026-11-16",
+    "2026-11-17",
+    "2026-11-18",
+    "2026-11-19",
+    "2026-11-20"
+  ],
+  "raw": [
+    {
+      "bass_dt": "20260609",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260610",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260611",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260612",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260613",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260614",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260615",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260616",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260617",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260618",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260619",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260620",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260621",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260622",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260623",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260624",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260625",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260626",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260627",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260628",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260629",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260630",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260701",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260702",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260703",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260704",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260705",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260706",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260707",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260708",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260709",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260710",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260711",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260712",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260713",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260714",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260715",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260716",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260717",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260718",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260719",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260720",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260721",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260722",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260723",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260724",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260725",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260726",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260727",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260728",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260729",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260730",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260731",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260801",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260802",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260803",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260804",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260805",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260806",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260807",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260808",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260809",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260810",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260811",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260812",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260813",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260814",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260815",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260816",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260817",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260818",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260819",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260820",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260821",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260822",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260823",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260824",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260825",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260826",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260827",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260828",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260829",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260830",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260831",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260901",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260902",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260903",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260904",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260905",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260906",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260907",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260908",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260909",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260910",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260911",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260912",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260913",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260914",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260915",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260916",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260917",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260918",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260919",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260920",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260921",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260922",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260923",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260924",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260925",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260926",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260927",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20260928",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260929",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20260930",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261001",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261002",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261003",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261004",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261005",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261006",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261007",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261008",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261009",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261010",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261011",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261012",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261013",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261014",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261015",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261016",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261017",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261018",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261019",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261020",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261021",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261022",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261023",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261024",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261025",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261026",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261027",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261028",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261029",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261030",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261031",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261101",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261102",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261103",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261104",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261105",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261106",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261107",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261108",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261109",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261110",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261111",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261112",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261113",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261114",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261115",
+      "wday_dvsn_cd": "01",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    },
+    {
+      "bass_dt": "20261116",
+      "wday_dvsn_cd": "02",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261117",
+      "wday_dvsn_cd": "03",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261118",
+      "wday_dvsn_cd": "04",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261119",
+      "wday_dvsn_cd": "05",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261120",
+      "wday_dvsn_cd": "06",
+      "bzdy_yn": "Y",
+      "tr_day_yn": "Y",
+      "opnd_yn": "Y",
+      "sttl_day_yn": "Y"
+    },
+    {
+      "bass_dt": "20261121",
+      "wday_dvsn_cd": "07",
+      "bzdy_yn": "N",
+      "tr_day_yn": "Y",
+      "opnd_yn": "N",
+      "sttl_day_yn": "N"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:29.487829+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-650",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-2.17",
+      "stck_prdy_clpr": "30000",
+      "acml_vol": "126029",
+      "acml_tr_pbmn": "3740793250",
+      "hts_kor_isnm": "성광벤드",
+      "stck_prpr": "29350",
+      "stck_shrn_iscd": "014620",
+      "prdy_vol": "148227",
+      "stck_mxpr": "39000",
+      "stck_llam": "21000",
+      "stck_oprc": "29900",
+      "stck_hgpr": "30150",
+      "stck_lwpr": "29300",
+      "stck_prdy_oprc": "30600",
+      "stck_prdy_hgpr": "30700",
+      "stck_prdy_lwpr": "29700",
+      "askp": "29400",
+      "bidp": "29350",
+      "prdy_vrss_vol": "-22198",
+      "vol_tnrt": "0.47",
+      "stck_fcam": "500",
+      "lstn_stcn": "26557364",
+      "cpfn": "143",
+      "hts_avls": "7795",
+      "per": "23.11",
+      "eps": "1270.00",
+      "pbr": "1.42",
+      "itewhol_loan_rmnd_ratem name": "1.68"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "29350",
+        "stck_oprc": "29900",
+        "stck_hgpr": "30150",
+        "stck_lwpr": "29300",
+        "acml_vol": "126029",
+        "acml_tr_pbmn": "3740793250",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-650",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

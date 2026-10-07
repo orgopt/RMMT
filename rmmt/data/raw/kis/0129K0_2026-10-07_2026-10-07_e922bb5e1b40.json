@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:22.692894+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "20",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "1.01",
+      "stck_prdy_clpr": "1971",
+      "acml_vol": "861",
+      "acml_tr_pbmn": "1698869",
+      "hts_kor_isnm": "신한제18호스팩",
+      "stck_prpr": "1991",
+      "stck_shrn_iscd": "0129K0",
+      "prdy_vol": "16535",
+      "stck_mxpr": "2560",
+      "stck_llam": "1380",
+      "stck_oprc": "1987",
+      "stck_hgpr": "1991",
+      "stck_lwpr": "1970",
+      "stck_prdy_oprc": "1971",
+      "stck_prdy_hgpr": "1988",
+      "stck_prdy_lwpr": "1967",
+      "askp": "1990",
+      "bidp": "1973",
+      "prdy_vrss_vol": "-15674",
+      "vol_tnrt": "0.02",
+      "stck_fcam": "100",
+      "lstn_stcn": "5620000",
+      "cpfn": "6",
+      "hts_avls": "112",
+      "per": "0.00",
+      "eps": "0.00",
+      "pbr": "0.00",
+      "itewhol_loan_rmnd_ratem name": "0.00"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "1991",
+        "stck_oprc": "1987",
+        "stck_hgpr": "1991",
+        "stck_lwpr": "1970",
+        "acml_vol": "861",
+        "acml_tr_pbmn": "1698869",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "20",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

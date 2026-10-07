@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:19.822472+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "1180",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "9.57",
+      "stck_prdy_clpr": "12330",
+      "acml_vol": "18061287",
+      "acml_tr_pbmn": "244362211985",
+      "hts_kor_isnm": "삼미금속",
+      "stck_prpr": "13510",
+      "stck_shrn_iscd": "012210",
+      "prdy_vol": "2068474",
+      "stck_mxpr": "16020",
+      "stck_llam": "8640",
+      "stck_oprc": "12580",
+      "stck_hgpr": "14260",
+      "stck_lwpr": "12300",
+      "stck_prdy_oprc": "11970",
+      "stck_prdy_hgpr": "12780",
+      "stck_prdy_lwpr": "11740",
+      "askp": "13510",
+      "bidp": "13500",
+      "prdy_vrss_vol": "15992813",
+      "vol_tnrt": "78.35",
+      "stck_fcam": "1000",
+      "lstn_stcn": "23051579",
+      "cpfn": "231",
+      "hts_avls": "3114",
+      "per": "0.00",
+      "eps": "0.00",
+      "pbr": "0.00",
+      "itewhol_loan_rmnd_ratem name": "2.57"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "13510",
+        "stck_oprc": "12580",
+        "stck_hgpr": "14260",
+        "stck_lwpr": "12300",
+        "acml_vol": "18061287",
+        "acml_tr_pbmn": "244362211985",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "1180",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

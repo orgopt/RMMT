@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:55.708651+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "0",
+      "prdy_vrss_sign": "3",
+      "prdy_ctrt": "0.00",
+      "stck_prdy_clpr": "3060",
+      "acml_vol": "3807",
+      "acml_tr_pbmn": "11643060",
+      "hts_kor_isnm": "KB오토시스",
+      "stck_prpr": "3060",
+      "stck_shrn_iscd": "024120",
+      "prdy_vol": "11369",
+      "stck_mxpr": "3975",
+      "stck_llam": "2145",
+      "stck_oprc": "3055",
+      "stck_hgpr": "3075",
+      "stck_lwpr": "3035",
+      "stck_prdy_oprc": "3060",
+      "stck_prdy_hgpr": "3065",
+      "stck_prdy_lwpr": "3025",
+      "askp": "3060",
+      "bidp": "3050",
+      "prdy_vrss_vol": "-7562",
+      "vol_tnrt": "0.03",
+      "stck_fcam": "500",
+      "lstn_stcn": "11500000",
+      "cpfn": "58",
+      "hts_avls": "352",
+      "per": "9.03",
+      "eps": "339.00",
+      "pbr": "0.30",
+      "itewhol_loan_rmnd_ratem name": "0.42"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "3060",
+        "stck_oprc": "3055",
+        "stck_hgpr": "3075",
+        "stck_lwpr": "3035",
+        "acml_vol": "3807",
+        "acml_tr_pbmn": "11643060",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "3",
+        "prdy_vrss": "0",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

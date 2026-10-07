@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T14:01:39.000360+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "0",
+      "prdy_vrss_sign": "3",
+      "prdy_ctrt": "0.00",
+      "stck_prdy_clpr": "2000",
+      "acml_vol": "18146",
+      "acml_tr_pbmn": "36298383",
+      "hts_kor_isnm": "디비금융제14호스팩",
+      "stck_prpr": "2000",
+      "stck_shrn_iscd": "0004Y0",
+      "prdy_vol": "9793",
+      "stck_mxpr": "2600",
+      "stck_llam": "1400",
+      "stck_oprc": "2000",
+      "stck_hgpr": "2010",
+      "stck_lwpr": "2000",
+      "stck_prdy_oprc": "2005",
+      "stck_prdy_hgpr": "2010",
+      "stck_prdy_lwpr": "2000",
+      "askp": "2035",
+      "bidp": "1967",
+      "prdy_vrss_vol": "8353",
+      "vol_tnrt": "0.34",
+      "stck_fcam": "100",
+      "lstn_stcn": "5315000",
+      "cpfn": "5",
+      "hts_avls": "106",
+      "per": "-90.91",
+      "eps": "-22.00",
+      "pbr": "1.03",
+      "itewhol_loan_rmnd_ratem name": "0.00"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "2000",
+        "stck_oprc": "2000",
+        "stck_hgpr": "2010",
+        "stck_lwpr": "2000",
+        "acml_vol": "18146",
+        "acml_tr_pbmn": "36298383",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "3",
+        "prdy_vrss": "0",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:31.123643+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-530",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-4.45",
+      "stck_prdy_clpr": "11920",
+      "acml_vol": "141724",
+      "acml_tr_pbmn": "1643074805",
+      "hts_kor_isnm": "해치텍",
+      "stck_prpr": "11390",
+      "stck_shrn_iscd": "0155E0",
+      "prdy_vol": "153024",
+      "stck_mxpr": "15490",
+      "stck_llam": "8350",
+      "stck_oprc": "11990",
+      "stck_hgpr": "11990",
+      "stck_lwpr": "11340",
+      "stck_prdy_oprc": "12110",
+      "stck_prdy_hgpr": "12200",
+      "stck_prdy_lwpr": "11790",
+      "askp": "11380",
+      "bidp": "11360",
+      "prdy_vrss_vol": "-11300",
+      "vol_tnrt": "2.58",
+      "stck_fcam": "500",
+      "lstn_stcn": "5487150",
+      "cpfn": "27",
+      "hts_avls": "625",
+      "per": "-5.87",
+      "eps": "-1940.00",
+      "pbr": "6.37",
+      "itewhol_loan_rmnd_ratem name": "0.41"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "11390",
+        "stck_oprc": "11990",
+        "stck_hgpr": "11990",
+        "stck_lwpr": "11340",
+        "acml_vol": "141724",
+        "acml_tr_pbmn": "1643074805",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-530",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

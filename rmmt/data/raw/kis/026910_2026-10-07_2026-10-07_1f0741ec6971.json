@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:04.494660+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "65",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "2.83",
+      "stck_prdy_clpr": "2300",
+      "acml_vol": "194673",
+      "acml_tr_pbmn": "453844616",
+      "hts_kor_isnm": "광진실업",
+      "stck_prpr": "2365",
+      "stck_shrn_iscd": "026910",
+      "prdy_vol": "391515",
+      "stck_mxpr": "2990",
+      "stck_llam": "1610",
+      "stck_oprc": "2395",
+      "stck_hgpr": "2440",
+      "stck_lwpr": "2225",
+      "stck_prdy_oprc": "2030",
+      "stck_prdy_hgpr": "2435",
+      "stck_prdy_lwpr": "1980",
+      "askp": "2365",
+      "bidp": "2330",
+      "prdy_vrss_vol": "-196842",
+      "vol_tnrt": "2.46",
+      "stck_fcam": "500",
+      "lstn_stcn": "7928326",
+      "cpfn": "40",
+      "hts_avls": "188",
+      "per": "-3.12",
+      "eps": "-759.00",
+      "pbr": "0.76",
+      "itewhol_loan_rmnd_ratem name": "0.00"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "2365",
+        "stck_oprc": "2395",
+        "stck_hgpr": "2440",
+        "stck_lwpr": "2225",
+        "acml_vol": "194673",
+        "acml_tr_pbmn": "453844616",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "65",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

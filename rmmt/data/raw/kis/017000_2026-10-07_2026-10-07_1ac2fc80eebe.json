@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:58:36.570032+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-10",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-0.43",
+      "stck_prdy_clpr": "2315",
+      "acml_vol": "32018",
+      "acml_tr_pbmn": "73573020",
+      "hts_kor_isnm": "신원종합개발",
+      "stck_prpr": "2305",
+      "stck_shrn_iscd": "017000",
+      "prdy_vol": "25549",
+      "stck_mxpr": "3005",
+      "stck_llam": "1625",
+      "stck_oprc": "2280",
+      "stck_hgpr": "2355",
+      "stck_lwpr": "2250",
+      "stck_prdy_oprc": "2335",
+      "stck_prdy_hgpr": "2335",
+      "stck_prdy_lwpr": "2275",
+      "askp": "2305",
+      "bidp": "2275",
+      "prdy_vrss_vol": "6469",
+      "vol_tnrt": "0.27",
+      "stck_fcam": "5000",
+      "lstn_stcn": "11668027",
+      "cpfn": "610",
+      "hts_avls": "269",
+      "per": "4.86",
+      "eps": "474.00",
+      "pbr": "0.25",
+      "itewhol_loan_rmnd_ratem name": "0.01"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "2305",
+        "stck_oprc": "2280",
+        "stck_hgpr": "2355",
+        "stck_lwpr": "2250",
+        "acml_vol": "32018",
+        "acml_tr_pbmn": "73573020",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-10",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

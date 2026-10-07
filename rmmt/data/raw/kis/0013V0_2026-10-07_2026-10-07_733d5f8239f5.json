@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:57:44.670991+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "150",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "2.78",
+      "stck_prdy_clpr": "5400",
+      "acml_vol": "114344",
+      "acml_tr_pbmn": "633997850",
+      "hts_kor_isnm": "삼진식품",
+      "stck_prpr": "5550",
+      "stck_shrn_iscd": "0013V0",
+      "prdy_vol": "64247",
+      "stck_mxpr": "7020",
+      "stck_llam": "3780",
+      "stck_oprc": "5350",
+      "stck_hgpr": "5680",
+      "stck_lwpr": "5350",
+      "stck_prdy_oprc": "5510",
+      "stck_prdy_hgpr": "5550",
+      "stck_prdy_lwpr": "5290",
+      "askp": "5550",
+      "bidp": "5540",
+      "prdy_vrss_vol": "50097",
+      "vol_tnrt": "1.15",
+      "stck_fcam": "500",
+      "lstn_stcn": "9918656",
+      "cpfn": "50",
+      "hts_avls": "550",
+      "per": "7.51",
+      "eps": "739.00",
+      "pbr": "1.31",
+      "itewhol_loan_rmnd_ratem name": "0.84"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "5550",
+        "stck_oprc": "5350",
+        "stck_hgpr": "5680",
+        "stck_lwpr": "5350",
+        "acml_vol": "114344",
+        "acml_tr_pbmn": "633997850",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "150",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

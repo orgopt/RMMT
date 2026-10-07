@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:05.347682+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-30",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-1.48",
+      "stck_prdy_clpr": "2030",
+      "acml_vol": "308139",
+      "acml_tr_pbmn": "633401368",
+      "hts_kor_isnm": "서울전자통신",
+      "stck_prpr": "2000",
+      "stck_shrn_iscd": "027040",
+      "prdy_vol": "1039737",
+      "stck_mxpr": "2635",
+      "stck_llam": "1425",
+      "stck_oprc": "2015",
+      "stck_hgpr": "2150",
+      "stck_lwpr": "1960",
+      "stck_prdy_oprc": "1740",
+      "stck_prdy_hgpr": "2105",
+      "stck_prdy_lwpr": "1740",
+      "askp": "2000",
+      "bidp": "1991",
+      "prdy_vrss_vol": "-731598",
+      "vol_tnrt": "2.21",
+      "stck_fcam": "500",
+      "lstn_stcn": "13917769",
+      "cpfn": "70",
+      "hts_avls": "278",
+      "per": "-5.21",
+      "eps": "-384.00",
+      "pbr": "3.18",
+      "itewhol_loan_rmnd_ratem name": "0.00"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "2000",
+        "stck_oprc": "2015",
+        "stck_hgpr": "2150",
+        "stck_lwpr": "1960",
+        "acml_vol": "308139",
+        "acml_tr_pbmn": "633401368",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-30",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

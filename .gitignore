@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+rmmt/data/.kis_token*
+rmmt/data/*.sqlite*
+rmmt/data/*.lock
+rmmt/results/
+rmmt/logs/
+Etc/

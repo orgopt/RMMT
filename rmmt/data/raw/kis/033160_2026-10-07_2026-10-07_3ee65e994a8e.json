@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T13:59:21.396982+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "490",
+      "prdy_vrss_sign": "2",
+      "prdy_ctrt": "2.51",
+      "stck_prdy_clpr": "19500",
+      "acml_vol": "1846426",
+      "acml_tr_pbmn": "37021153180",
+      "hts_kor_isnm": "엠케이전자",
+      "stck_prpr": "19990",
+      "stck_shrn_iscd": "033160",
+      "prdy_vol": "1553273",
+      "stck_mxpr": "25350",
+      "stck_llam": "13650",
+      "stck_oprc": "19680",
+      "stck_hgpr": "20800",
+      "stck_lwpr": "19300",
+      "stck_prdy_oprc": "20300",
+      "stck_prdy_hgpr": "20800",
+      "stck_prdy_lwpr": "18820",
+      "askp": "19990",
+      "bidp": "19980",
+      "prdy_vrss_vol": "293153",
+      "vol_tnrt": "7.52",
+      "stck_fcam": "500",
+      "lstn_stcn": "24564058",
+      "cpfn": "123",
+      "hts_avls": "4910",
+      "per": "333.17",
+      "eps": "60.00",
+      "pbr": "1.14",
+      "itewhol_loan_rmnd_ratem name": "4.11"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "19990",
+        "stck_oprc": "19680",
+        "stck_hgpr": "20800",
+        "stck_lwpr": "19300",
+        "acml_vol": "1846426",
+        "acml_tr_pbmn": "37021153180",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "2",
+        "prdy_vrss": "490",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

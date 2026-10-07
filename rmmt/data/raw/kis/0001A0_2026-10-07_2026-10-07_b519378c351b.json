@@ -1,0 +1,58 @@
+{
+  "source": "KIS",
+  "retrieved_at": "2026-10-07T14:01:36.954369+00:00",
+  "response": {
+    "output1": {
+      "prdy_vrss": "-130",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-1.49",
+      "stck_prdy_clpr": "8730",
+      "acml_vol": "46018",
+      "acml_tr_pbmn": "400136680",
+      "hts_kor_isnm": "덕양에너젠",
+      "stck_prpr": "8600",
+      "stck_shrn_iscd": "0001A0",
+      "prdy_vol": "66610",
+      "stck_mxpr": "11340",
+      "stck_llam": "6120",
+      "stck_oprc": "8770",
+      "stck_hgpr": "8810",
+      "stck_lwpr": "8600",
+      "stck_prdy_oprc": "8540",
+      "stck_prdy_hgpr": "8780",
+      "stck_prdy_lwpr": "8540",
+      "askp": "8600",
+      "bidp": "8590",
+      "prdy_vrss_vol": "-20592",
+      "vol_tnrt": "0.18",
+      "stck_fcam": "500",
+      "lstn_stcn": "25468962",
+      "cpfn": "132",
+      "hts_avls": "2190",
+      "per": "34.26",
+      "eps": "251.00",
+      "pbr": "3.63",
+      "itewhol_loan_rmnd_ratem name": "0.95"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261007",
+        "stck_clpr": "8600",
+        "stck_oprc": "8770",
+        "stck_hgpr": "8810",
+        "stck_lwpr": "8600",
+        "acml_vol": "46018",
+        "acml_tr_pbmn": "400136680",
+        "flng_cls_code": "00",
+        "prtt_rate": "0.00",
+        "mod_yn": "N",
+        "prdy_vrss_sign": "5",
+        "prdy_vrss": "-130",
+        "revl_issu_reas": ""
+      }
+    ],
+    "rt_cd": "0",
+    "msg_cd": "MCA00000",
+    "msg1": "정상처리 되었습니다."
+  }
+}

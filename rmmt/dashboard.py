@@ -1,5 +1,5 @@
 """Read-only Korean terminal dashboard. No broker calls or ledger mutation."""
-from datetime import datetime, date, time as clock_time
+from datetime import datetime, date, time as day_time
 from decimal import Decimal
 import json
 from statistics import median
@@ -10,6 +10,9 @@ from .config import local_path
 from .strategy import SEOUL, FLAGS, timestamp, execution_window, rebalance_dates
 
 LABELS={'MANAGED':'관리','CAUTIONARY':'주의환기','CAUTION':'투자주의','WARNING':'투자경고','RISK':'투자위험'}
+PHASE_LABELS={'COLLECTION':'수집','VALIDATION':'검증','SELECTION':'선정','SELL':'매도','BUY':'매수'}
+PHASE_STATUS={'WAITING':'대기','RUNNING':'진행 중','COMPLETE':'완료','ERROR':'오류',
+              'TIMEOUT':'시간 초과','PARTIAL':'일부 미체결·미주문','SKIPPED':'미실행'}
 
 def clean(value):
     return ''.join(c if c.isprintable() else ' ' for c in str(value))
@@ -81,6 +84,42 @@ class Dashboard:
         self.stream=stream or sys.stdout;self.started=(started_at or datetime.now(SEOUL)).astimezone(SEOUL)
         self.last_refresh=None;self.last_logged=None;self.cached_snapshot=None;self.snapshot_mtime=None;self.cached_signal=None;self.signal_mtime=None
         self.trade_signature=None;self.cached_trade=None
+        self.workflow={};self.workflow_day=None
+
+    def update_workflow(self,event):
+        if not isinstance(event,dict) or event.get('stage')!='PIPELINE_PROGRESS':return False
+        phase=event.get('phase')
+        if phase not in PHASE_LABELS:return False
+        day=event.get('day',self.workflow_day)
+        if day!=self.workflow_day or (phase=='COLLECTION' and event.get('status')=='RUNNING'
+            and (self.workflow.get(phase,{}).get('status') in ('ERROR','TIMEOUT')
+                 or event.get('detail','').startswith('직전 거래일 '))):
+            self.workflow={name:{'status':'WAITING'} for name in PHASE_LABELS};self.workflow_day=day
+        before=self.workflow.get(phase,{})
+        changed=before.get('status')!=event.get('status')
+        self.workflow[phase]=dict(before,**event)
+        if event.get('status')=='COMPLETE' and 'total' in self.workflow[phase]:
+            self.workflow[phase]['completed']=self.workflow[phase]['total']
+        return changed
+
+    def workflow_lines(self):
+        if not self.workflow:return []
+        lines=['단계별 진행상황'+(' ('+self.workflow_day+' KST)' if self.workflow_day else '')]
+        blocked=False
+        for name,label in PHASE_LABELS.items():
+            item=self.workflow.get(name,{'status':'WAITING'})
+            details=[]
+            if 'total' in item:
+                total=item['total'];done=item.get('completed',0)
+                details.append(f'{done}/{total}'+(f' ({100*done/total:.1f}%)' if total else ''))
+            for key in ('server','symbol','detail','error'):
+                if item.get(key):details.append(str(item[key]))
+            if item.get('retry_after') and item.get('status')=='ERROR':details.append(f'{item["retry_after"]:g}초 후 재조회')
+            status='SKIPPED' if blocked and item['status']=='WAITING' else item['status']
+            lines.append(label+': '+PHASE_STATUS.get(status,status)
+                +(' | '+clip_width(' | '.join(details),180) if details else ''))
+            if item['status'] in ('ERROR','TIMEOUT'):blocked=True
+        return lines
 
     def snapshot(self):
         path=local_path(self.snapshot_path)
@@ -101,7 +140,6 @@ class Dashboard:
                 or not calendar['start']<=today<calendar['end'] or not isinstance(sessions,list)
                 or sessions!=sorted(set(sessions))):raise ValueError('calendar')
             days=[date.fromisoformat(day) for day in sessions]
-            ready=clock_time.fromisoformat(self.config.data_ready_time)
         except (OSError,ValueError,KeyError,TypeError,AttributeError):
             return ['다음일정: 거래일 달력 준비 후 확인 (KST)']
         try:upcoming=rebalance_dates(calendar,self.config)
@@ -112,11 +150,15 @@ class Dashboard:
         if not isinstance(selection_snapshot,dict):selection_snapshot={}
         for day in upcoming:
             start,end=execution_window(day,self.config)
-            if now>=end or ledger.db.execute('SELECT 1 FROM runs WHERE day=?',(day,)).fetchone():continue
+            if now>=end or ledger.blocking_run(day):continue
             done=(selection_snapshot.get('selection_date')==day
                 and selection_snapshot.get('selection_config_hash')==self.config.hash)
             stamp=start.strftime('%Y.%m.%d %H:%M')+' KST'
-            if not done:events.append('종목선정('+stamp+')')
+            if not done:
+                if self.config.history_bundle_path:
+                    morning=datetime.combine(date.fromisoformat(day),day_time.fromisoformat(self.config.collection_time),SEOUL)
+                    events.append('증분수집('+morning.strftime('%Y.%m.%d %H:%M')+' KST) / 종목선정('+stamp+')')
+                else:events.append('수집·종목선정('+stamp+')')
             events.append('리밸런싱('+stamp+' 선정 완료 직후)')
             if len(events)>=2:break
         lines=['다음일정: '+(' '.join(events[:2]) if events else '달력 범위 내 일정 없음')]
@@ -141,16 +183,20 @@ class Dashboard:
                     self.cached_signal=compute_signal(snapshot,self.config);self.signal_mtime=self.snapshot_mtime
                 signal=self.cached_signal
             except Exception:error='선정 자료 검증 실패: 주문 신호로 사용할 수 없음'
+        if self.workflow and (self.workflow.get('SELECTION',{}).get('status')!='COMPLETE'
+            or snapshot.get('selection_date')!=self.workflow_day):signal=None
         selected={r['symbol'] for r in (signal or {}).get('candidates',[]) if r['selected']}
         positions=ledger.positions();orders=ledger.orders()
         from .config import preview_holdings
         virtual={symbol:holding for symbol,holding in preview_holdings(self.config).items() if symbol not in positions}
         for symbol,holding in virtual.items():
             positions[symbol]={'quantity':holding['quantity'],'cost':str(holding['price']*holding['quantity']),'mark':str(holding['price']),'preview':True}
-        cycle=ledger.db.execute("SELECT * FROM runs WHERE day=? AND kind='REBALANCE'",(snapshot.get('execution_date'),)).fetchone()
-        baseline=snapshot.get('selection_positions',positions)
+        cycle_day=self.workflow_day if self.workflow else snapshot.get('execution_date')
+        cycle=ledger.db.execute("SELECT * FROM runs WHERE day=? AND kind='REBALANCE'",(cycle_day,)).fetchone()
+        baseline=snapshot.get('selection_positions',positions) if snapshot.get('execution_date')==cycle_day else positions
         cycle_orders=[]
-        if cycle:
+        if cycle and cycle['state']=='REARMED':signal=None;selected=set();baseline=positions
+        if cycle and cycle['state']!='REARMED':
             payload=json.loads(cycle['payload']);baseline=payload.get('selection_positions',baseline)
             cycle_orders=ledger.orders(run_id=cycle['id'])
             for audit in ledger.db.execute("SELECT kind,payload FROM audit WHERE kind IN ('INITIAL_PLAN','POST_SELL_PLAN','REPLACEMENT') ORDER BY id"):
@@ -226,12 +272,16 @@ class Dashboard:
         for row in ledger.db.execute('SELECT amount FROM cash_events WHERE external_flow=1'):external+=Decimal(row['amount'])
         equity=ledger.cash+value
         summary_signal=dict(signal,candidates=[dict(r,selected=r['symbol'] in selected) for r in signal['candidates']]) if signal else None
-        lines=[f'전략이름: {self.config.strategy_id}',
+        lines=[f'전략이름: {self.config.strategy_id} ({self.config.strategy_label})',
             f'시작시간: {self.started:%Y.%m.%d %H:%M:%S} KST',
             f'업데이트: {now:%Y-%m-%d %H:%M:%S} KST',
             f'실행모드: KIS {self.config.environment}',
-            selection_summary(summary_signal),
+            selection_summary(summary_signal if not self.workflow or self.workflow.get('SELECTION',{}).get('status')=='COMPLETE' else None),
             *self.schedule(ledger,now,positions),
+            *([f'당일 실행시각: {self.config.execution_time} KST (재예약, 당일만 적용)']
+              if ledger.meta('rearm_execution_day')==now.astimezone(SEOUL).date().isoformat() else []),
+            f'현재처리: {clean(state)}',
+            *self.workflow_lines(),
             *([f'주문 차단: {readiness}'] if readiness!='주문 모드 설정 확인 완료' else []), '',
             f'전략현금: {money(ledger.cash)}원 | 주문 예약금: {money(ledger.reserved_cash())}원 | 가용현금: {money(ledger.available_cash())}원',
             f'투자상한: {money(self.config.capital)}원',

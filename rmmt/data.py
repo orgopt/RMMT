@@ -1,4 +1,4 @@
-"""Local snapshots and independent KIS-master/Yahoo/KRX collection."""
+"""KIS snapshots and collection; Yahoo helpers are retained for legacy offline diagnostics."""
 from datetime import datetime, date, timedelta, timezone
 from pathlib import Path
 from io import BytesIO
@@ -13,12 +13,14 @@ WIDTHS=[2,1,4,4,4,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,9,5,5,1,1,1,2,1,1,1,
 def write_json(path,data):
     path=local_path(path);path.parent.mkdir(parents=True,exist_ok=True)
     temp=path.with_suffix(path.suffix+'.tmp')
-    temp.write_text(json.dumps(data,ensure_ascii=False,indent=2,default=str),encoding='utf-8')
+    with temp.open('w',encoding='utf-8') as stream:
+        json.dump(data,stream,ensure_ascii=False,indent=2,default=str)
     os.replace(temp,path)
 
 def load_json(path):
     path=local_path(path)
-    try:return json.loads(path.read_text(encoding='utf-8'))
+    try:
+        with path.open(encoding='utf-8') as stream:return json.load(stream)
     except (OSError,ValueError):raise RMMTError(f'JSON 파일 읽기 실패: {path.name}') from None
 
 KOSPI_WIDTHS=[2,1,4,4,4,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,9,5,5,1,1,1,2,1,1,1,2,2,2,3,1,3,12,12,8,15,21,2,7,1,1,1,1,1,9,9,9,5,9,8,9,3,1,1,1]
@@ -40,6 +42,7 @@ def parse_master(content,market='KOSDAQ'):
             raise RMMTError('KIS master 경고 코드 변경/누락')
         rows[symbol]={'symbol':symbol,'market':market,'name':head[21:].strip(),'group':fields[0],
           'common':fields[0] in ('ST','FS') and fields[preferred]=='0',
+          'master_market_cap_oku':int(fields[-5]) if fields[-5].isdigit() else None,
           'listing_date':fields[listing],'halted':fields[halt]=='Y','liquidating':fields[liquid]=='Y',
           'flags':{'MANAGED':fields[managed]=='Y','CAUTIONARY':market=='KOSDAQ' and fields[20]=='Y',
              'CAUTION':fields[warning]=='01','WARNING':fields[warning]=='02','RISK':fields[warning]=='03'}}
@@ -136,11 +139,43 @@ def collect_calendar(broker,start,end,progress=None):
     return {'schema_version':1,'source':'KIS chk-holiday','calendar_complete':True,'start':start,'end':end,
             'retrieved_at':datetime.now(timezone.utc).isoformat(),'sessions':sessions,'raw':raw}
 
-def yahoo_history(symbol,start,day,session=None,config=None,market='KOSDAQ'):
+def history_start(day,listing):
+    """One calendar year ending at the completed price reference day."""
+    end=date.fromisoformat(day)
+    try:begin=end.replace(year=end.year-1)
+    except ValueError:begin=end.replace(year=end.year-1,day=28)
+    return max(begin.isoformat(),listing)
+
+def yahoo_history(symbol,start,day,session=None,config=None,market='KOSDAQ',_full=False,progress=None,required_dates=None):
     config=config or Config()
     session=session or requests.Session()
-    begin=int(datetime.combine(date.fromisoformat(start),datetime.min.time(),SEOUL).timestamp())
+    cache_path=local_path(f'{config.data_dir}/yahoo_history/{market}_{symbol}.json')
+    def valid_price(value):
+        try:return value is not None and decimal(value)>0
+        except RMMTError:return False
+    cached=None
+    if not _full and cache_path.exists():
+        try:
+            candidate=load_json(cache_path)
+            if (candidate.get('start','9999')<=start and candidate.get('asof_date','')<=day
+                and isinstance(candidate.get('rows'),dict) and candidate['rows'] and isinstance(candidate.get('provenance'),dict)):
+                cached=dict(candidate,rows={d:v for d,v in candidate['rows'].items() if start<=d<=day and valid_price(v)})
+        except (RMMTError,ValueError,TypeError,KeyError):pass
+    required=set(required_dates if required_dates is not None else [day])
+    def complete(rows):
+        return all(valid_price(rows.get(d)) for d in required)
+    if cached and cached['asof_date']==day and complete(cached['rows']):
+        if progress:progress('Yahoo')
+        return cached['rows'],cached['provenance']
+    query_start=start
+    if cached:
+        latest=max(cached['rows']) if cached['rows'] else start
+        query_start=max(start,(date.fromisoformat(latest)-timedelta(days=config.history_overlap_days)).isoformat())
+        missing=[d for d in required if not valid_price(cached['rows'].get(d))]
+        if missing:query_start=min(query_start,max(start,min(missing)))
+    begin=int(datetime.combine(date.fromisoformat(query_start),datetime.min.time(),SEOUL).timestamp())
     end=int(datetime.combine(date.fromisoformat(day)+timedelta(days=1),datetime.min.time(),SEOUL).timestamp())
+    if progress:progress('Yahoo')
     try:
         response=session.get('https://query1.finance.yahoo.com/v8/finance/chart/'+symbol+('.KS' if market=='KOSPI' else '.KQ'),
             params={'period1':begin,'period2':end,'interval':'1d','events':'splits,div'},headers={'User-Agent':'Mozilla/5.0'},timeout=(config.connect_timeout,config.public_timeout))
@@ -149,14 +184,40 @@ def yahoo_history(symbol,start,day,session=None,config=None,market='KOSDAQ'):
     content=response.content;digest=hashlib.sha256(content).hexdigest()
     raw_path=local_path(f'{config.data_dir}/raw/yahoo/{symbol}_{day}_{digest[:12]}.json')
     raw_path.parent.mkdir(parents=True,exist_ok=True);raw_path.write_bytes(content)
-    closes=result.get('indicators',{}).get('quote',[{}])[0].get('close',[])
-    timestamps=result.get('timestamp',[])
-    if len(closes)!=len(timestamps):return {},None
-    rows={datetime.fromtimestamp(t,SEOUL).date().isoformat():value for t,value in zip(timestamps,closes) if value is not None}
-    return rows,{'source':'YAHOO','hash':digest,'path':str(raw_path.relative_to(local_path('.'))),
-                 'split_events':result.get('events',{}).get('splits',{}),'symbol':symbol}
+    # Legacy Yahoo helper: malformed provider payloads must remain retryable.
+    try:
+        closes=result['indicators']['quote'][0]['close']
+        timestamps=result['timestamp']
+        if not isinstance(closes,list) or not isinstance(timestamps,list) or len(closes)!=len(timestamps):return {},None
+        if any(type(t) not in (int,float) for t in timestamps):return {},None
+        rows={datetime.fromtimestamp(t,SEOUL).date().isoformat():value for t,value in zip(timestamps,closes) if valid_price(value)}
+        splits=result.get('events',{}).get('splits',{})
+        if not isinstance(splits,dict):return {},None
+        for event in splits.values():
+            if not isinstance(event,dict) or decimal(event['numerator'])<=0 or decimal(event['denominator'])<=0:return {},None
+            datetime.fromtimestamp(event['date'],SEOUL)
+    except (AttributeError,KeyError,TypeError,ValueError,IndexError,OverflowError,OSError,RMMTError):return {},None
+    rows={d:v for d,v in rows.items() if start<=d<=day}
+    if cached:
+        old_splits=cached['provenance'].get('split_events',{})
+        changed=any(k not in old_splits or old_splits[k]!=v for k,v in splits.items())
+        changed=changed or any(k not in splits and begin<=int(v.get('date',k))<end
+            for k,v in old_splits.items())
+        changed=changed or any(abs(decimal(v)/decimal(cached['rows'][d])-1)>decimal('0.000001')
+            for d,v in rows.items() if d in cached['rows'] and decimal(cached['rows'][d])!=0)
+        if changed:return yahoo_history(symbol,start,day,session,config,market,_full=True,progress=progress,required_dates=required)
+        if not rows or not set(rows).intersection(cached['rows']):
+            return yahoo_history(symbol,start,day,session,config,market,_full=True,progress=progress,required_dates=required)
+        rows=cached['rows']|rows;splits=old_splits|splits
+    provenance={'source':'YAHOO','hash':digest,'path':str(raw_path.relative_to(local_path('.'))),
+                 'split_events':splits,'symbol':symbol}
+    if cached:
+        provenance['cache_sources']=cached['provenance'].get('cache_sources',[])+[{'hash':cached['provenance']['hash'],'path':cached['provenance']['path']}]
+    if rows:write_json(cache_path,{'start':start,'asof_date':day,'last_price_date':max(rows),
+        'required_dates_complete':complete(rows),'rows':rows,'provenance':provenance})
+    return rows,provenance
 
-def verify_split_only(yahoo,nominal,split_events):
+def verify_split_only(yahoo,nominal,split_events,required_dates=None):
     """Validate quote.close vs unadjusted KRX close using only published split events."""
     if not yahoo:return False
     events=[]
@@ -165,6 +226,7 @@ def verify_split_only(yahoo,nominal,split_events):
         events.append((at,decimal(event['numerator'])/decimal(event['denominator'])))
     checked=0
     for day,bar in nominal.items():
+        if required_dates is not None and day not in required_dates:continue
         if day not in yahoo or bar['volume']<=0 or bar['nominal_close']<=0:continue
         factor=decimal(1)
         for effective,ratio in events:
@@ -174,12 +236,22 @@ def verify_split_only(yahoo,nominal,split_events):
         checked+=1
     return checked>=22
 
-def collect_day(day,calendar,config,positions=None,master_provider=None,market_data=None,progress=None):
+def collect_day(day,calendar,config,positions=None,master_provider=None,market_data=None,progress=None,bootstrap=False,deadline=None):
     """Must run on the requested session after close; never use today's type for old dates."""
     now=datetime.now(SEOUL)
+    def check_deadline():
+        if deadline is not None and datetime.now(SEOUL)>=deadline:
+            raise RMMTError('자료 수집 중 주문창 종료: 신규 주문 없음')
+    check_deadline()
+    original_progress=progress
+    def checked_progress(value):
+        check_deadline()
+        if original_progress:original_progress(value)
+    progress=checked_progress
     from datetime import time as day_time
-    if now.date().isoformat()!=day or now.time()<day_time.fromisoformat(config.data_ready_time):
+    if not bootstrap and (now.date().isoformat()!=day or now.time()<day_time.fromisoformat(config.data_ready_time)):
         raise RMMTError('당일 16시 이후에만 현재 master 기반 데이터 수집 가능. 과거 날짜는 보관된 스냅샷을 사용하세요.')
+    if bootstrap and day>=now.date().isoformat():raise RMMTError('최초 자료는 완료된 과거 거래일까지 수집해야 합니다.')
     sessions=calendar['sessions']
     if not calendar.get('calendar_complete') or not calendar.get('source') or day not in sessions:
         raise RMMTError('수집일을 포함하는 공식 완전 달력 필요')
@@ -188,7 +260,12 @@ def collect_day(day,calendar,config,positions=None,master_provider=None,market_d
     if market_data is None:
         raise RMMTError('KIS 시세 공급자를 명시해야 합니다.')
     master,_=(master_provider or MasterProvider(config=config)).get()
+    if bootstrap:
+        # Newly listed today cannot have a previous-session closing history.
+        master=dict(master,rows={symbol:row for symbol,row in master['rows'].items()
+            if row.get('listing_date','')<=day.replace('-','')})
     # Complete owned-position monitoring even if the new full-universe signal later fails.
+    formation_dates=sessions[idx-config.formation_days:idx+1]
     held_bars={}
     for symbol in (positions or {}):
         row=master['rows'].get(symbol)
@@ -197,62 +274,80 @@ def collect_day(day,calendar,config,positions=None,master_provider=None,market_d
         listing=row['listing_date']
         if len(listing)!=8 or not listing.isdigit():
             held_bars[symbol]={};continue
-        start=listing[:4]+'-'+listing[4:6]+'-'+listing[6:]
-        held_bars[symbol]=market_data.history(symbol,start,day)
-    daily={'schema_version':1,'date':day,'sessions':sessions[:idx+1],'bars':held_bars,
-           'source':'KIS','retrieved_at':datetime.now(timezone.utc).isoformat(),'quality':'OFFICIAL_CURRENT'}
-    write_json(config.daily_path,daily)
-    caps=market_data.caps(day,master)
+        start=max(formation_dates[0],listing[:4]+'-'+listing[4:6]+'-'+listing[6:])
+        held_bars[symbol]=market_data.history(symbol,start,day,required_dates=formation_dates)
+    check_deadline()
+    caps=market_data.caps(day,master,bootstrap=True) if bootstrap else market_data.caps(day,master)
     symbols=set(caps)
     missing=symbols-set(master['rows'])
     if missing:raise RMMTError('KIS 명부와 공식 유형 master 불일치: '+','.join(sorted(missing)[:10]))
     common=[s for s in symbols if master['rows'][s]['common']]
-    master_common={s for s,r in master['rows'].items() if r['common'] and (config.market=='COMBINED' or r.get('market','KOSDAQ')==config.market)}
-    if master_common-set(common):raise RMMTError('전체 보통주 시총 누락; D1 계산 금지')
+    master_common={s for s,r in master['rows'].items() if r['common']}
+    exclusions=getattr(market_data,'cap_exclusions',{})
+    if not isinstance(exclusions,dict):exclusions={}
+    if any(s not in master_common or not master['rows'][s].get('liquidating')
+           or record.get('reason')!='LIQUIDATING_MISSING_CAP' for s,record in exclusions.items()):
+        raise RMMTError('시총 수집 제외 계약 위반')
+    if master_common-set(common)-set(exclusions):raise RMMTError('전체 보통주 시총 누락; D1 계산 금지')
     common.sort(key=lambda s:(caps[s]['market_cap'],s))
-    from .strategy import decile_bounds
-    start_rank,stop_rank=decile_bounds(len(common),config.decile)
-    needed=set(common[start_rank:stop_rank])|set(positions or {})
-    securities=[];lineage=[];daily_positions=dict(held_bars)
-    for completed,symbol in enumerate(common,1):
+    from .strategy import decile_bounds,rank_universe
+    tie_seed=__import__('secrets').token_hex(16)
+    universe=rank_universe([{'symbol':s,'market':master['rows'][s].get('market','KOSDAQ'),
+                            'market_cap':caps[s]['market_cap']} for s in common],config,tie_seed)
+    start_rank,stop_rank=decile_bounds(len(universe),config.decile)
+    needed={r['symbol'] for r in universe[start_rank:stop_rank]}|set(positions or {})
+    history_total=len(set(common)&needed);history_completed=0
+    securities=[];daily_positions=dict(held_bars)
+    for symbol in common:
         m=master['rows'][symbol];cap=caps[symbol]['market_cap']
         if cap<=0:raise RMMTError('KIS 보통주 시총 결측/0')
         row={'symbol':symbol,'name':m['name'],'market':m.get('market','KOSDAQ'),'security_type':'COMMON','market_cap':str(cap),
-             'market_cap_date':day,'classification_source':'KIS master: ST/FS and preferred=0',
-             'signal_source':'YAHOO','adjustment_basis':'UNKNOWN','shock_history_complete':False,
+             'market_cap_date':day,'market_cap_source':'KIS_MASTER','market_cap_basis':'PREVIOUS_DAY_MASTER_APPROX','market_cap_actual_date':None,'classification_source':'KIS master: ST/FS and preferred=0',
+             'signal_source':'KIS','adjustment_basis':'UNKNOWN','shock_history_complete':False,'listing_date':m['listing_date'],
              'tradable_on_signal':not m['halted'] and not m['liquidating'],'regulatory':caps[symbol]['regulatory'],
-             'daily':[{'date':day,'nominal_close':caps[symbol]['nominal_close'],'volume':caps[symbol]['volume'],'split_adjusted_close':None}]}
+             'daily':[]}
         if symbol in needed:
             listed=m['listing_date']
             if len(listed)!=8 or not listed.isdigit():raise RMMTError('공식 상장일 누락')
-            start=listed[:4]+'-'+listed[4:6]+'-'+listed[6:]
-            bars=held_bars[symbol] if symbol in held_bars else market_data.history(symbol,start,day)
-            history,provenance=yahoo_history(symbol,start,day,config=config,market=m.get('market','KOSDAQ'))
-            if provenance:lineage.append(provenance)
-            verified=provenance is not None and verify_split_only(history,bars,provenance['split_events'])
-            row['daily']=[bar|{'split_adjusted_close':history.get(d)} for d,bar in sorted(bars.items()) if d<=day]
-            row['adjustment_basis']='SPLIT_ONLY' if verified else 'UNKNOWN'
-            # Require nominal history reaching first trading day since listing, not a truncated 22-row buffer.
-            row['shock_history_complete']=bool(bars) and min(bars)<=start and verified
+            start=max(formation_dates[0],listed[:4]+'-'+listed[4:6]+'-'+listed[6:])
+            def history_progress(server):
+                if progress:progress({'stage':'PREPARING_SIGNAL_HISTORY','completed':history_completed,
+                                      'total':history_total,'server':server,'symbol':symbol})
+            history_progress('KIS')
+            bars=held_bars[symbol] if symbol in held_bars else market_data.history(symbol,start,day,required_dates=formation_dates)
+            adjusted=market_data.adjusted_history(symbol,start,day,required_dates=formation_dates)
+            check_deadline()
+            # Keep missing original bars visible instead of inferring prices or volumes.
+            row['daily']=[{'date':d,'nominal_close':bars.get(d,{}).get('nominal_close'),
+                'volume':bars.get(d,{}).get('volume'),'adjusted_close':adjusted.get(d,{}).get('adjusted_close')}
+                for d in formation_dates if d>=start]
+            row['adjustment_basis']='KIS_ADJUSTED'
+            row['shock_history_complete']=all(d in bars and decimal(adjusted.get(d,{}).get('adjusted_close',0))>0 for d in formation_dates)
             if symbol in (positions or {}):daily_positions[symbol]=bars
+            history_completed+=1
+            if progress:progress({'stage':'PREPARING_SIGNAL_HISTORY','completed':history_completed,'total':history_total,'server':'KIS','symbol':symbol})
         securities.append(row)
-        if progress and (completed%config.progress_interval==0 or completed==len(common)):
-            progress({'stage':'PREPARING_SIGNAL_HISTORY','completed':completed,'total':len(common)})
     # Held securities absent from today's master cannot be silently inferred delisted.
     for symbol in set(positions or {})-set(daily_positions):daily_positions[symbol]={}
     finished=datetime.now(SEOUL)
-    if finished.date().isoformat()!=day or finished.time()<day_time.fromisoformat(config.data_ready_time):
+    check_deadline()
+    if (not bootstrap and (finished.date().isoformat()!=day or finished.time()<day_time.fromisoformat(config.data_ready_time))) or (bootstrap and finished.date()!=now.date()):
         raise RMMTError('수집 도중 날짜 변경: 현재 master/시총을 과거 신호로 확정하지 않습니다.')
     cutoff=finished.astimezone(timezone.utc).isoformat()
-    snapshot={'schema_version':1,'market':config.market,'signal_date':day,'execution_date':sessions[idx+1],
+    snapshot={'schema_version':1,'market':'COMBINED','collection_scope':'ALL_MARKETS_CAPS_TARGET_HISTORY',
+        'history_selection':{'market':config.market,'decile':config.decile,'formation_days':config.formation_days},
+        'history_symbols':sorted(set(common)&needed),'signal_date':day,'execution_date':sessions[idx+1],
         'sessions':sessions,'calendar_complete':True,'universe_complete':True,'data_cutoff_at':cutoff,
-        'source':'KIS REST + KIS master + Yahoo','quality':'OFFICIAL_CURRENT','securities':securities,
-        'lineage':{'master':{k:v for k,v in master.items() if k!='rows'},'yahoo':lineage,'kis':market_data.lineage,'calendar':calendar['source']}}
+        'source':'KIS REST + KIS master','signal_price_basis':'KIS_ADJUSTED','quality':'OFFICIAL_CURRENT','securities':securities,'collection_exclusions':exclusions,'history_scope':'FORMATION_TARGET_AND_OWNED','shock_scope':'FORMATION_ONLY','market_cap_source':'KIS_MASTER','market_cap_tie_seed':tie_seed,
+        'lineage':{'master':{k:v for k,v in master.items() if k!='rows'},'kis':market_data.lineage,'calendar':calendar['source']}}
     daily={'schema_version':1,'date':day,'sessions':sessions[:idx+1],'bars':daily_positions,'source':'KIS',
            'retrieved_at':cutoff,'quality':'OFFICIAL_CURRENT'}
+    if bootstrap:
+        snapshot.update(bootstrap_current=True,selection_basis='CURRENT_UNIVERSE_MASTER_CAP_PREVIOUS_CLOSE',prepared_at=cutoff)
+        snapshot['lineage']['bootstrap']={'historical_membership':False,'market_cap_source':'KIS_MASTER','market_cap_actual_date':None,'regulatory_as_of':cutoff,'price_date':day}
     write_json(config.daily_path,daily)
     write_json(f'{config.data_dir}/snapshots/{day}.json',snapshot)
     weekly=date.fromisoformat(day).isocalendar()[:2]!=date.fromisoformat(sessions[idx+1]).isocalendar()[:2]
-    # Collection archives prices; scheduled 10:00 selection is published separately.
+    # Price archives are refreshed at the execution window; selection is published separately.
     return {'date':day,'common_count':len(common),'d1_count':len(common)//10+bool(len(common)%10),
-        'decile':config.decile,'decile_count':stop_rank-start_rank,'weekly_signal_ready':False}
+        'decile':config.decile,'decile_count':stop_rank-start_rank,'history_count':history_total,'weekly_signal_ready':False}

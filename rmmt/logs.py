@@ -16,17 +16,27 @@ _active = None
 COLUMNS = ('event_key','mode','environment','ledger','id','intent_id','symbol','side','qty','gross','fee','tax','occurred_at','simulated','event_type')
 
 STATUS_TEXT = {
+    'PREPARING_INITIAL_DATA':'최초 운용 자료 수집 중','INITIAL_DATA_READY':'최초 운용 자료 준비 완료',
+    'CAP_EXCLUDED':'시총 수집 제외',
+    'SKIPPED':'리밸런싱 스킵','DATA_NOT_READY_AT_START':'예정 시각에 자료 미완성 — 다음 회차 대기',
+    'DATA_NOT_READY_BEFORE_DEADLINE':'주문창 종료까지 자료·선정 미완료 — 신규 주문 없음',
+    'WAITING_DATA':'자료 미완성 — 재조회 대기',
     'WAITING_SELECTION':'다음 선정·리밸런싱 대기','PREPARING_SELECTION':'종목선정 중', 'SELECTION_READY':'종목선정 완료 — 리밸런싱 시작',
     'PREPARING_CALENDAR':'거래일 달력 수집 중', 'CALENDAR_READY':'거래일 달력 준비 완료',
     'PREPARING_MARKET_DATA':'종목·가격 자료 수집 중', 'PREPARING_SIGNAL_HISTORY':'종목별 과거 가격 수집 중',
     'MARKET_DATA_READY':'종목·가격 자료 수집 완료', 'OUTSIDE_WINDOW':'주문 시간 외 — 주문 대기',
-    'WAITING_WINDOW':'오전 10시 주문 시작 대기', 'NON_SESSION':'휴장일 — 주문 없음',
+    'WAITING_WINDOW':'예정 수집·리밸런싱 시작 대기', 'NON_SESSION':'휴장일 — 주문 없음',
     'WAITING_DATA_CLOSE':'장 마감 자료 수집 대기', 'AUTO_COLLECTION_DISABLED':'자동 자료 수집 꺼짐',
     'WEEKLY_SIGNAL_READY':'주간 종목 선정 완료', 'WAITING_WEEKLY_SIGNAL':'다음 주간 종목 선정 대기',
     'RECOVERY_REQUIRED':'복구 필요 — 오류 확인 후 재시도 대기', 'COMPLETE':'주문 처리 완료',
     'WINDOW_CLOSED':'주문 시간 종료', 'INTERRUPTED':'이전 주문 실행 중단 — 재실행 제한',
     'FAILED':'주문 처리 실패', 'DAY_ALREADY_EXECUTED':'오늘 이미 실행하여 추가 주문 없음',
 }
+
+def server_label(value):
+    """Only Yahoo/KIS, padded to five ASCII cells."""
+    name='Yahoo' if str(value).startswith('Yahoo') else 'KIS'
+    return name.ljust(5)
 
 def readable_event(message):
     """Summarize display events; retain full structured diagnostics in files."""
@@ -39,7 +49,28 @@ def readable_event(message):
         return '실행 오류: '+text.strip().splitlines()[-1]+' | 상세 내용은 system 로그 확인'
     try:value=json.loads(text)
     except (ValueError,TypeError):return ' '.join(text.split())
+    if isinstance(value,dict) and value.get('stage') in ('KIS_ALL_COMMON_CAP','PREPARING_SIGNAL_HISTORY'):
+        completed=value.get('completed',0);total=value.get('total',0)
+        percent=100*completed/total if total else 0
+        label='종목별 시총 수집중' if value['stage']=='KIS_ALL_COMMON_CAP' else '종목별 과거 가격 수집중'
+        server=value.get('server','KIS')
+        return f"{label}({server_label(server)}) {completed}/{total}({percent:.1f}%)"
+    if isinstance(value,dict) and value.get('stage')=='CAP_EXCLUDED':
+        return '수집 제외: '+str(value.get('symbol',''))+' '+str(value.get('name',''))+' | '+str(value.get('reason',''))
+    if isinstance(value,dict) and value.get('state')=='RECOVERY_REQUIRED' and value.get('retry_attempt'):
+        return '수집·실행 실패 | 재시도 '+str(value['retry_attempt'])+'회 | '+str(value.get('error',''))
     if not isinstance(value,dict):return '운영 결과 기록 완료 | 상세 내용은 system 로그 확인'
+    if value.get('stage')=='PIPELINE_PROGRESS':
+        from .dashboard import PHASE_LABELS,PHASE_STATUS
+        phase=PHASE_LABELS.get(value.get('phase'),value.get('phase','처리'))
+        status=PHASE_STATUS.get(value.get('status'),value.get('status',''))
+        parts=[phase+': '+status]
+        if 'total' in value:parts.append(f"{value.get('completed',0)}/{value['total']}")
+        for key in ('server','symbol','detail','error'):
+            if value.get(key):parts.append(str(value[key]))
+        if value.get('status')=='ERROR' and value.get('retry_after'):parts.append(f"{value['retry_after']:g}초 후 재조회")
+        if value.get('exclusions'):parts.append('제외 사유: '+json.dumps(value['exclusions'],ensure_ascii=False))
+        return ' | '.join(parts)
     parts=[]
     for key in ('stage','state','preparation'):
         if value.get(key):parts.append(STATUS_TEXT.get(value[key],str(value[key])))
@@ -73,8 +104,9 @@ def realtime_event(message):
         return any(word in text.lower() for word in ('error','오류','실패','차단','체결','취소','중단','투자상한 변경'))
     if not isinstance(value,dict):return False
     if value.get('error') or value.get('new_rebalance_blocked_reason'):return True
+    if value.get('stage') in ('KIS_HISTORY','KIS_ADJUSTED_HISTORY'):return False
     if value.get('stage'):return True
-    return value.get('state') in ('RECOVERY_REQUIRED','COMPLETE','WINDOW_CLOSED','INTERRUPTED','FAILED')
+    return value.get('state') in ('RECOVERY_REQUIRED','COMPLETE','WINDOW_CLOSED','INTERRUPTED','FAILED','SKIPPED')
 
 class Logs:
     def __init__(self, config, secrets=()):
@@ -105,12 +137,15 @@ class Logs:
             stamp = datetime.now(ZoneInfo('Asia/Seoul')).isoformat(timespec='seconds')
             if channel=='system' and realtime_event(text):
                 compact=self.redact(readable_event(text))
-                try:kind=json.loads(str(text)).get('stage')
+                try:
+                    payload=json.loads(str(text));kind=payload.get('stage')
+                    if kind=='PIPELINE_PROGRESS':kind=(kind,payload.get('phase'),payload.get('status'))
                 except (ValueError,AttributeError):kind=None
                 # Replace the previous milestone of an ongoing collection.
                 if kind and kind==self.last_recent_kind and self.recent:self.recent.pop()
-                entry=stamp+' '+compact[:500]
-                previous=self.recent[-1].split(' ',1)[-1] if self.recent else None
+                display_stamp=datetime.fromisoformat(stamp).strftime('%Y.%m.%d %H:%M:%S')
+                entry=display_stamp+' '+compact[:500]
+                previous=self.recent[-1][20:] if self.recent else None
                 if previous!=compact[:500]:self.recent.append(entry)
                 self.last_recent_kind=kind
             record = logging.LogRecord('rmmt',logging.INFO,'',0,stamp+' '+self.redact(text),(),None)

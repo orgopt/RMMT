@@ -36,11 +36,22 @@ class Ledger:
             from urllib.parse import quote
             self.db=sqlite3.connect('file:'+quote(str(self.path))+'?mode=ro',uri=True,timeout=10)
             self.db.row_factory=sqlite3.Row
-            if self.meta('mode')!=config.mode:raise RMMTError('원장 모드 불일치')
+            try:
+                self.validate_strategy()
+                if self.meta('mode')!=config.mode:raise RMMTError('원장 모드 불일치')
+            except Exception:
+                self.db.close();raise
             return
         self.path.parent.mkdir(parents=True,exist_ok=True)
         self.db=sqlite3.connect(self.path,timeout=10)
         self.db.row_factory=sqlite3.Row
+        # Reject identity changes before schema migration or capital updates.
+        try:
+            if self.db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='meta'").fetchone() and self.meta('initial_equity'):
+                self.validate_strategy()
+                if self.meta('mode')!=config.mode:raise RMMTError('원장 모드 불일치: PAPER/DEMO/LIVE 별도 DB가 필요합니다.')
+        except Exception:
+            self.db.close();raise
         self.db.execute('PRAGMA foreign_keys=ON')
         self.db.execute('PRAGMA journal_mode=WAL')
         self.db.executescript('''
@@ -73,9 +84,13 @@ class Ledger:
             with self.db:
                 self.set_meta('initial_equity',str(config.capital));self.set_meta('cash',str(config.capital))
                 self.set_meta('capital_limit',str(config.capital));self.set_meta('mode',config.mode)
+                self.set_meta('strategy',config.strategy)
                 self.db.execute('INSERT INTO cash_events VALUES(?,?,?,?,?,?)',('initial','ALLOCATION',str(config.capital),1,now(),None))
         if self.meta('mode') != config.mode:
             raise RMMTError('원장 모드 불일치: PAPER/DEMO/LIVE 별도 DB가 필요합니다.')
+        if self.meta('strategy') is None:
+            # Ledgers created before strategy selection belonged to reverse.
+            with self.db:self.set_meta('strategy','reverse')
         old_limit=self.meta('capital_limit')
         if Decimal(old_limit) != config.capital:
             with self.db:
@@ -84,6 +99,12 @@ class Ledger:
                     ('CAPITAL_LIMIT_CHANGE',json.dumps({'old':old_limit,'new':str(config.capital),'source':'ENV'},ensure_ascii=False),now()))
             from .logs import event
             event(f'투자상한 변경: {Decimal(old_limit):,.0f}원 → {config.capital:,.0f}원 (.env 반영)')
+
+    def validate_strategy(self):
+        stored=self.meta('strategy')
+        if stored is None:stored='reverse'
+        if stored!=self.config.strategy:
+            raise RMMTError(f'원장 전략 불일치: 원장={stored}, 설정={self.config.strategy}. 전략별 별도 DB 경로가 필요합니다. 기존 보유·미완료 주문은 원래 전략 원장에서 관리하세요.')
 
     def close(self):
         from .logs import sync
@@ -114,9 +135,71 @@ class Ledger:
         return qty-sum(o['quantity']-o['filled'] for o in self.orders(True) if o['symbol']==symbol and o['side']=='SELL')
     def audit(self,kind,payload):
         with self.db:self.db.execute('INSERT INTO audit(kind,payload,occurred_at) VALUES(?,?,?)',(kind,json.dumps(payload,ensure_ascii=False,default=str),now()))
+    def blocking_run(self,day,exclude_kind=None):
+        """An explicit unused rearm and an empty completed recovery do not block a cycle."""
+        query="""SELECT * FROM runs r WHERE r.day=?
+            AND NOT (r.kind='REBALANCE' AND r.state='REARMED' AND NOT EXISTS (SELECT 1 FROM orders o WHERE o.run_id=r.id))
+            AND (r.kind<>'RECOVERY' OR r.state<>'COMPLETE' OR EXISTS (SELECT 1 FROM orders o WHERE o.run_id=r.id))"""
+        params=[day]
+        if exclude_kind is not None:query+=' AND r.kind<>?';params.append(exclude_kind)
+        row=self.db.execute(query+' ORDER BY created_at DESC LIMIT 1',params).fetchone()
+        return dict(row) if row else None
+    def rearm_empty_rebalance(self,day,reason,execution_time=None):
+        """Operator-only: preserve the old run in audit, allow one new empty-day attempt."""
+        from datetime import date,time
+        try:
+            if date.fromisoformat(day).isoformat()!=day:raise ValueError()
+        except (TypeError,ValueError):raise RMMTError('재예약 날짜는 YYYY-MM-DD 형식이어야 합니다.') from None
+        if not isinstance(reason,str) or not reason.strip():raise RMMTError('재예약 사유가 필요합니다.')
+        if execution_time is not None:
+            try:
+                if len(execution_time)!=5 or not time(9)<=time.fromisoformat(execution_time)<=time(15):raise ValueError()
+            except (TypeError,ValueError):raise RMMTError('재예약 시각은 09:00~15:00 HH:MM이어야 합니다.') from None
+        self.db.execute('BEGIN IMMEDIATE')
+        try:
+            run=self.db.execute("SELECT * FROM runs WHERE day=? AND kind='REBALANCE'",(day,)).fetchone()
+            if not run or run['state'] not in ('COMPLETE','REARMED'):
+                raise RMMTError('주문 없는 COMPLETE 리밸런싱만 재예약할 수 있습니다.')
+            if self.db.execute("SELECT 1 FROM orders o JOIN runs r ON r.id=o.run_id WHERE r.day=?",(day,)).fetchone():
+                raise RMMTError('오늘 주문 기록이 있어 재예약할 수 없습니다. 취소·거절 주문도 포함합니다.')
+            if self.orders(True):raise RMMTError('미완료/UNKNOWN 주문이 있어 재예약할 수 없습니다.')
+            if self.blocking_run(day,exclude_kind='REBALANCE'):
+                raise RMMTError('다른 당일 실행 기록이 있어 재예약할 수 없습니다.')
+            if run['state']=='REARMED':
+                if execution_time is not None and self.meta('rearm_execution_time')!=execution_time:
+                    raise RMMTError('이미 재예약된 회차의 시각을 변경할 수 없습니다.')
+                self.db.rollback();return False
+            self.db.execute('INSERT INTO audit(kind,payload,occurred_at) VALUES(?,?,?)',
+                ('EMPTY_REBALANCE_REARMED',json.dumps({'day':day,'reason':reason.strip(),'execution_time':execution_time,'previous_run':dict(run),
+                    'orders_checked':0,'active_orders_checked':0},ensure_ascii=False),now()))
+            self.db.execute("UPDATE runs SET state='REARMED' WHERE id=?",(run['id'],))
+            if execution_time is not None:
+                self.set_meta('rearm_execution_day',day);self.set_meta('rearm_execution_time',execution_time)
+            self.db.commit();return True
+        except Exception:self.db.rollback();raise
+    def execution_config(self,base_config,day):
+        """A rearm time applies only to its recorded day; .env remains the daily default."""
+        if self.meta('rearm_execution_day')!=day:return base_config
+        from dataclasses import replace
+        from datetime import time
+        value=self.meta('rearm_execution_time')
+        try:
+            parsed=time.fromisoformat(value)
+            if len(value)!=5 or not time(9)<=parsed<=time(15):raise ValueError()
+        except (TypeError,ValueError):raise RMMTError('원장의 당일 재예약 시각이 유효하지 않습니다.') from None
+        return replace(base_config,execution_time=value)
     def begin_run(self,run_id,day,kind,payload):
         existing=self.db.execute('SELECT * FROM runs WHERE day=? AND kind=?',(day,kind)).fetchone()
         if existing:
+            if kind=='REBALANCE' and existing['state']=='REARMED':
+                with self.db:
+                    if self.db.execute("SELECT 1 FROM orders o JOIN runs r ON r.id=o.run_id WHERE r.day=?",(day,)).fetchone() or self.orders(True):
+                        raise RMMTError('재예약 이후 주문 기록이 생겨 실행할 수 없습니다.')
+                    self.db.execute('UPDATE runs SET id=?,state=?,config_hash=?,payload=?,created_at=? WHERE id=?',
+                        (run_id,'STARTED',self.config.hash,json.dumps(payload,ensure_ascii=False),now(),existing['id']))
+                    self.db.execute('INSERT INTO audit(kind,payload,occurred_at) VALUES(?,?,?)',
+                        ('EMPTY_REBALANCE_REARM_CONSUMED',json.dumps({'day':day,'previous_id':existing['id'],'run_id':run_id}),now()))
+                return self.run(run_id),True
             if existing['id']!=run_id or existing['config_hash']!=self.config.hash:
                 raise RMMTError('같은 거래일 실행의 신호/설정 변경은 허용하지 않습니다.')
             return dict(existing),False

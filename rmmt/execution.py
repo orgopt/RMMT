@@ -27,7 +27,27 @@ class PaperBroker:
 class Executor:
     def __init__(self,config,ledger,broker,quotes,clock=None,sleep=None):
         self.config=config;self.ledger=ledger;self.broker=broker;self.quotes=quotes
-        self.clock=clock or (lambda:datetime.now(timezone.utc));self.sleep=sleep or time.sleep;self.observer=None
+        self.clock=clock or (lambda:datetime.now(timezone.utc));self.sleep=sleep or time.sleep;self.observer=None;self.progress=None
+        self.active_phase=None;self.phase_completed=0;self.phase_total=0;self.phase_blocked=0;self.run_day=None;self.progress_run=None
+    def phase_progress(self,status='RUNNING',symbol=None,detail=None):
+        if not self.progress or not self.active_phase:return
+        side=self.active_phase
+        orders=[o for o in self.ledger.orders(run_id=self.progress_run) if o['side']==side] if self.progress_run else []
+        filled=sum(o['filled'] for o in orders);quantity=sum(o['quantity'] for o in orders)
+        rejected=sum(o['state']=='REJECTED' for o in orders)
+        cancelled=sum(o['state']=='CANCELLED' for o in orders)
+        if status=='COMPLETE' and (rejected or cancelled or self.phase_blocked):status='PARTIAL'
+        value={'stage':'PIPELINE_PROGRESS','phase':side,'status':status,'day':self.run_day,
+            'completed':self.phase_completed,'total':self.phase_total,
+            'detail':detail or f'체결 {filled}/{quantity}주 / 거절 {rejected} / 취소 {cancelled} / 미주문 {self.phase_blocked}'}
+        if symbol:value['symbol']=symbol
+        try:self.progress(value)
+        except Exception:
+            from .logs import event
+            event('DASHBOARD_ERROR: 단계 진행상황 출력 실패; 주문 원장 보존')
+    def start_phase(self,phase,total,detail=None):
+        self.active_phase=phase;self.phase_completed=0;self.phase_total=total;self.phase_blocked=0
+        self.phase_progress(detail=detail or ('대상 없음' if not total else None))
     def observe(self):
         if self.observer:
             try:self.observer()
@@ -93,6 +113,7 @@ class Executor:
         if isinstance(self.broker,PaperBroker):return
         while self.clock()<end:
             self.reconcile()
+            self.phase_progress(symbol=self._order(intent)['symbol'])
             self.observe()
             order=next(o for o in self.ledger.orders() if o['intent_id']==intent)
             if order['state'] in ('FILLED','CANCELLED','REJECTED'):return
@@ -150,6 +171,7 @@ class Executor:
             self.ledger.transition(order['intent_id'],'UNKNOWN',reason='SUBMIT_RESPONSE_UNKNOWN')
             raise RMMTError('주문 접수 여부 UNKNOWN: 복구 전 재주문하지 않습니다.') from None
         self.observe()
+        self.phase_progress(symbol=symbol)
         if isinstance(self.broker,PaperBroker):
             self.ledger.apply_cumulative(order['intent_id'],qty,qty*price,'FILLED',simulated=True)
         else:self.wait_order(order['intent_id'],end)
@@ -168,18 +190,23 @@ class Executor:
         if not recovery_only and (not signal or signal['execution_date']!=day):
             recovery_only=True
         kind='RECOVERY' if recovery_only else 'REBALANCE'
-        other=self.ledger.db.execute('SELECT * FROM runs WHERE day=? AND kind<>?',(day,kind)).fetchone()
+        other=self.ledger.blocking_run(day,exclude_kind=kind)
         if other:
             return {'state':other['state'],'day':day,'restarted':True,'reason':'DAY_ALREADY_EXECUTED'}
         run_id=f'{self.config.strategy_id}:{day}:{kind}'
+        self.run_day=day;self.progress_run=run_id
         prior=self.ledger.run(run_id)
-        if prior:
+        if prior and prior['state']!='REARMED':
             # Restart reconciles/cancels previously submitted orders, but never runs the day twice.
             if prior['state'] in ('COMPLETE','WINDOW_CLOSED','INTERRUPTED','FAILED'):
                 return {'state':prior['state'],'day':day,'restarted':True}
             self.cancel_remaining(run_id);self.ledger.finish_run(run_id,'INTERRUPTED')
             return {'state':'INTERRUPTED','day':day,'restarted':True}
-        self.assert_account()
+        self.start_phase('SELL',0,detail='주문 전 계좌 검증·계획 계산')
+        try:self.assert_account()
+        except RMMTError as exc:
+            self.phase_progress('ERROR',detail='주문 전 계좌 검증 실패: '+str(exc))
+            raise
         _,created=self.ledger.begin_run(run_id,day,kind,{'signal_id':signal.get('signal_id') if signal else None,'selection_positions':self.ledger.positions()})
         try:
             positions=self.ledger.positions();quotes={};selected=[];checks=[]
@@ -207,13 +234,19 @@ class Executor:
                 # A zero-valued holding is sold only after actual resumed trading observation.
                 plan['sells']=[o for o in plan['sells'] if not positions.get(o['symbol'],{}).get('exit_required') or quotes[o['symbol']].get('traded_today')]
             self.ledger.audit('INITIAL_PLAN',dict(plan,run_id=run_id))
+            self.start_phase('SELL',len(plan['sells']))
             for request in plan['sells']:
-                self.submit(run_id,request,end)
+                result=self.submit(run_id,request,end)
+                if result is None:self.phase_blocked+=1
+                self.phase_completed+=1;self.phase_progress(symbol=request['symbol'])
                 if self.clock()>=end:break
             sell_active=[o for o in self.ledger.orders(True,run_id) if o['side']=='SELL']
             if sell_active or self.clock()>=end:
                 self.cancel_remaining(run_id);self.ledger.finish_run(run_id,'WINDOW_CLOSED')
+                self.phase_progress('TIMEOUT',detail='매도 미완료 또는 주문창 종료 — 매수 차단')
+                self.start_phase('BUY',0);self.phase_progress('SKIPPED',detail='매도 단계 미완료')
                 return {'state':'WINDOW_CLOSED','day':day,'plan':plan}
+            self.phase_progress('COMPLETE',detail='매도 대상 없음' if not plan['sells'] else None)
             if not recovery_only:
                 # Recompute equity and integer targets from confirmed sale fills.
                 current=self.ledger.positions()
@@ -238,10 +271,13 @@ class Executor:
                     buy_plan['buys']=[r for r in buy_plan['buys'] if r['quantity']>0]
                 buy_plan['cash_scale']=str(scale)
                 self.ledger.audit('POST_SELL_PLAN',dict(buy_plan,run_id=run_id))
+                self.start_phase('BUY',len(buy_plan['buys']))
                 attempted=set(plan['selected']);slots=list(buy_plan['selected']);sequence=0
                 for request in buy_plan['buys']:
                     if self.clock()>=end:break
                     result=self.submit(run_id,request,end)
+                    if result is None:self.phase_blocked+=1
+                    self.phase_completed+=1;self.phase_progress(symbol=request['symbol'])
                     if result and result['filled']>0:continue
                     if result and result['state'] not in ('REJECTED','CANCELLED'):continue
                     # Keep a partially-filled/previously-owned symbol in its slot; no extra replacement.
@@ -257,15 +293,23 @@ class Executor:
                         self.ledger.audit('REPLACEMENT',{'old':request['symbol'],'new':replacement,'sequence':sequence,'signal_id':signal['signal_id'],'run_id':run_id})
                         substitute={'symbol':replacement,'side':'BUY','quantity':qty,'target_value':str(amount)}
                         result=self.submit(run_id,substitute,end,sequence)
+                        self.phase_progress(symbol=replacement)
                         if result and (result['filled']>0 or result['state'] not in ('REJECTED','CANCELLED')):break
                         if self.clock()>=end:break
+            else:
+                self.start_phase('BUY',0)
             self.cancel_remaining(run_id)
-            state='WINDOW_CLOSED' if self.ledger.orders(True,run_id) else 'COMPLETE'
+            # An exhausted window cannot mean COMPLETE when buy requests remain.
+            timed_out=self.clock()>=end or self.phase_completed<self.phase_total
+            state='WINDOW_CLOSED' if timed_out or self.ledger.orders(True,run_id) else 'COMPLETE'
             self.ledger.finish_run(run_id,state)
             with self.ledger.db:self.ledger.record_nav(day)
             if not self.ledger.validate()['passed']:raise RMMTError('체결 후 원장 검증 실패')
+            self.phase_progress('TIMEOUT' if state=='WINDOW_CLOSED' or self.phase_completed<self.phase_total else 'COMPLETE',
+                detail='회복매도 회차 — 매수 없음' if recovery_only else '매수 대상 없음' if not self.phase_total else None)
             return {'state':state,'day':day,'plan':plan,'ledger':self.ledger.summary()}
-        except Exception:
+        except Exception as exc:
+            self.phase_progress('ERROR',detail=str(exc))
             self.ledger.finish_run(run_id,'FAILED')
             # Preserve the original exception. Reservations are kept if cancellation cannot be confirmed.
             try:self.cancel_remaining(run_id)

@@ -1,12 +1,12 @@
 # RMMT 프로젝트 명세
 
-최종 갱신: 2026-10-07 (사용자 요청 및 현재 소스 기준)
+최종 갱신: 2026-10-12 (KIS 수정주가 전환 및 실행 안정성 보완)
 
-이 문서는 Reverse_Momentum 프로젝트의 현재 구현과 운영 계약을 설명한다. 과거 대화 없이도 개발자가 프로그램을 이해하고 수정할 수 있도록 작성한다. 운영 규칙은 현재 `main_rmmt.py`, `rmmt/`, `.env.example`을 기준으로 하며 이전 PDF·연구 결과의 규칙과 구분한다. 실제 사용자 설정과 비밀값의 유일한 원본은 `.env`이다. 이 문서에 앱키·시크릿·계좌번호·비밀번호·토큰을 기록하지 않는다.
+이 문서는 Reverse_Momentum 프로젝트의 현재 구현과 운영 계약을 설명한다. 과거 대화 없이도 개발자가 프로그램을 이해하고 수정할 수 있도록 작성한다. 운영 규칙은 현재 `main_rmmt.py`, `rmmt/`, `.env.example`을 기준으로 하며 이전 PDF·연구 결과의 규칙과 구분한다. 변경 이력의 과거 Yahoo·전체 이력 수집 설명은 마지막 KIS 수정주가 전환 절로 대체되며 현재 운영 계약이 아니다. 실제 사용자 설정과 비밀값의 유일한 원본은 `.env`이다. 이 문서에 앱키·시크릿·계좌번호·비밀번호·토큰을 기록하지 않는다.
 
 ## 1. 목적과 프로젝트 영역
 
-RMMT는 시가총액 집단 안에서 과거 수익률이 낮은 보통주를 선정하여 균등 배분하는 역모멘텀 전략이다. KIS 실계좌 주문을 중심으로 독립적인 현금·보유수량·주문·체결 원장을 유지한다. 다른 전략이 같은 계좌를 사용해도 RMMT가 매수하여 귀속시킨 수량만 매도한다. 계좌 전체 잔고를 RMMT 소유로 가져오지 않는다. 공유계좌 현금 배분은 사용자가 조정한다.
+RMMT는 시가총액 집단 안에서 보통주를 선정하여 균등 배분하며 `.env`의 `STRATEGY`로 역모멘텀(`reverse`, 과거 수익률 낮은 순) 또는 모멘텀(`momentum`, 높은 순)을 선택한다. KIS 실계좌 주문을 중심으로 독립적인 현금·보유수량·주문·체결 원장을 유지한다. 다른 전략이 같은 계좌를 사용해도 RMMT가 매수하여 귀속시킨 수량만 매도한다. 계좌 전체 잔고를 RMMT 소유로 가져오지 않는다. 공유계좌 현금 배분은 사용자가 조정한다.
 
 프로젝트는 실전 운영과 연구용 도구를 포함한다. `Etc/src/`, `Etc/Reference/`, `Etc/output/`, `dashboard/`의 과거 백테스트와 웹 대시보드는 실전 터미널 서비스와 다른 실행 경로다. 연구 성과를 현재 실전 규칙의 검증된 성과로 간주하지 않는다. 과거 경고 지정 이력·상장폐지·권리변동 자료의 누락 및 대리변수 한계는 README와 각 연구 보고서를 참조한다.
 
@@ -17,9 +17,9 @@ RMMT는 시가총액 집단 안에서 과거 수익률이 낮은 보통주를 �
 | `main_rmmt.py` | CLI, 시작 시각, 서비스 루프, 준비·주문·조회 명령 연결 |
 | `rmmt/config.py` | 환경설정 파싱·검증, 전략 ID·설정 해시, 경로 제한, 주문 활성화 검사 |
 | `rmmt/strategy.py` | 스냅샷 검증, 십분위, 포메이션, 급변 판정, 후보 순위, 목표수량·일정 |
-| `rmmt/bootstrap.py` | 공식 달력 확보, 마감 수집, 당일 선정 준비, 중복 준비 방지 |
-| `rmmt/data.py` | JSON 입출력, 공식 종목 마스터, Yahoo 수정가격, 달력, 일별 자료, 현재가 캐시 |
-| `rmmt/market.py` | KIS 시총·명목 일봉·이력 캐시·경고 상태 해석 |
+| `rmmt/bootstrap.py` | 공식 달력 확보, 예정시각 증분 수집·검증·선정, 오류 재시도 및 종료시각 스킵 |
+| `rmmt/data.py` | JSON 입출력, 공식 종목 마스터, 대상 집단 결정·KIS 가격 수집 연결, 달력, 일별 자료, 현재가 캐시 |
+| `rmmt/market.py` | KIS 시총·원주가/수정주가 일봉·분리 캐시·경고 상태 해석 |
 | `rmmt/kis.py` | KIS 인증, 요청 속도 제한, 연속조회, 잔고·매수가능금액·주문·취소 |
 | `rmmt/execution.py` | 매도 선행, 매수 후행, 체결 대조, 잔량 취소, UNKNOWN 복구, 자체 모의체결 |
 | `rmmt/ledger.py` | SQLite 원장, 거래·현금·수량·평가 사건, 실행 잠금, 귀속수량 및 예약금 |
@@ -40,15 +40,17 @@ BCSO/nightGap 구현을 참고했지만 RMMT 런타임이 해당 전략 폴더�
 
 `MARKET`은 KOSDAQ, KOSPI, COMBINED 중 선택하며 대소문자를 정규화한다. COMBINED는 두 시장 보통주를 합친 하나의 모집단에서 십분위를 구한다. 공식 마스터로 보통주를 판별하며 우선주 등은 제외한다.
 
-가격·거래·경고 필터를 적용하기 **전에** 모집단 전체를 `(시총 오름차순, 종목코드 오름차순)`으로 정렬한다. `DECILE=0`은 전체, 1은 최소 시총, 10은 최대 시총 집단이다. n개를 10개 집단으로 나누되 q=n//10, r=n%10으로 앞 r개 집단은 q+1개, 나머지는 q개를 배정한다. 시총 동률은 코드순이다.
+가격·거래·경고 필터를 적용하기 **전에** 모집단 전체를 시총 오름차순으로 정렬한다. 시총 동률은 스냅샷에 저장한 seed와 종목코드 해시로 정하며 수집과 선정에 같은 순서를 사용한다. `DECILE=0`은 전체, 1은 최소 시총, 10은 최대 시총 집단이다. n개를 10개 집단으로 나누되 q=n//10, r=n%10으로 앞 r개 집단은 q+1개, 나머지는 q개를 배정한다. seed 없는 합성·과거 입력의 시총 동률만 코드순이다.
 
 ### 3.2 포메이션과 순위
 
-`FORMATION_DAYS=F`는 5~504 **시장 거래일**이다. 주문일 당일 가격을 포메이션에 넣지 않고 직전 완료 거래일을 신호 기준일로 사용한다. 기준일 및 F거래일 전 가격을 포함하는 F+1개 종가 자료가 필요하다.
+`FORMATION_DAYS=F`는 5~252 **시장 거래일**이다. 주문일 당일 가격을 포메이션에 넣지 않고 직전 완료 거래일을 신호 기준일로 사용한다. 기준일 및 F거래일 전 가격을 포함하는 F+1개 종가 자료가 필요하다.
 
-`formation_return = split_adjusted_close[기준일] / split_adjusted_close[F거래일 전] - 1`
+`formation_return = adjusted_close[기준일] / adjusted_close[F거래일 전] - 1`
 
-가격은 분할만 조정한 가격이며 현금 배당 재투자를 신호 가격에 섞지 않는다. 현재 수집 구현은 Yahoo 가격·분할 자료와 KIS 명목 가격의 검증을 사용한다. KIS만 사용하는 단일 공급원 구현이 아니다. 수익률 오름차순, 동률 종목코드순으로 역모멘텀 순위를 정한다. 화면의 역모멘텀 수치는 이 수익률의 퍼센트 표현이며 별도의 점수 변환은 없다.
+신호 가격은 KIS 일봉 API의 FID_ORG_ADJ_PRC=0 수정주가이며 adjustment_basis=KIS_ADJUSTED, signal_source=KIS로 기록한다. 종목별 원주가와 Yahoo 분할 이벤트의 교차검증은 실전 경로에서 제거했다. KIS가 제공하는 조정 기준을 사용하며 이를 분할만 조정한 가격 또는 현금 배당 재투자 총수익 가격으로 단정하지 않는다. 최소가격·보유 평가에는 FID_ORG_ADJ_PRC=1 원주가와 현재가를 사용한다. `STRATEGY=reverse`는 수익률 오름차순, `STRATEGY=momentum`은 수익률 내림차순이며 동률은 두 전략 모두 종목코드 오름차순이다. `formation_return`은 정렬용 부호 변환 없이 원래 수익률을 저장한다. 화면의 평균·중위 수치는 이 수익률의 퍼센트 표현이다. 수익률 양수·음수를 별도 적격 조건으로 추가하지 않으며, 적격 종목 수가 HOLDINGS 이하이면 두 전략이 같은 종목 집합을 선택할 수 있다.
+
+전략 유형은 Config의 `strategy` 및 공개 설정·설정 해시에 포함된다. 역모멘텀 전략 ID는 기존 형식(예 `KOSDAQ_D1_21D_S0_1W_N20`)을 유지하며 모멘텀은 같은 ID에 `_MOMENTUM`을 붙인다. 신호 JSON과 보고서 manifest에는 `strategy`, `strategy_id`를 기록한다. 후보 순서가 계획·실주문·매수 차단/거절 후 차순위 대체에 전달되므로 실행 엔진은 두 전략에 공통 적용한다.
 
 ### 3.3 적격 필터
 
@@ -84,24 +86,23 @@ BCSO/nightGap 구현을 참고했지만 RMMT 런타임이 해당 전략 폴더�
 
 ## 4. 거래일 일정 및 서비스 흐름
 
-일정은 KST 기준이다. `REBALANCE_ANCHOR_DATE` 이상인 첫 공식 거래일부터 `REBALANCE_DAYS` 거래일마다 선정·리밸런싱한다. 매일=1, 1주≈5, 1개월≈21, 1년≈252 거래일이며 실제 달력 월·연 단위와 같지는 않다. 월요일 휴장이면 기준일 이후 첫 개장일로 순연된다. 재시작해도 기준일을 새로 잡지 않는다.
+일정은 KST 기준이다. `REBALANCE_DAYS`는 정수 뒤 D/W/M/Y 단위로 입력하며 허용 범위는 1~252D, 1~52W, 1~12M, 1Y이다. D는 시장 거래일 간격이며 N>1은 매년 첫 거래일부터 계산한다. W/M/Y는 해당 주(월요일 기준)·월·년의 첫 공식 개장일에 선정·리밸런싱하며 휴장이면 기간 안의 첫 개장일로 순연한다. 주·월·년 간격은 기존 고정 위상을 유지하므로 재시작으로 기준을 새로 잡지 않는다. `REBALANCE_ANCHOR_DATE` 입력은 현재 사용하지 않는다.
 
-`REVERSE_EXECUTION_TIME`은 09:00~15:00 HH:MM이며 현재 주문창 길이는 30분이다. 예: 10:00에 선정 시작 → 선정 완료 직후 매도 → 매수 → 10:30 주문창 종료. 별도 금요일 오후 선정 규칙은 현재 사용하지 않는다. 선정·검증에 걸린 시간도 주문창에 포함한다.
+`REVERSE_EXECUTION_TIME`은 09:00~15:00 HH:MM이며 현재 주문창 길이는 30분이다. 현재 단일 파일 운용은 08:00 전체 일봉 증분 갱신 → 13:30 검증·선정·매도·매수 → 14:00 주문창 종료다. 초기 1년 자료는 별도 수집 프로그램으로 준비한다. 별도 16:00 자동 수집 및 금요일 오후 선정 절차는 없다. history_bundle_path가 없는 호환 경로만 예정시각에 대상 가격 수집부터 시작한다.
 
 휴장은 KIS 공식 `chk-holiday` 조회의 해당 날짜 및 `opnd_yn`으로 판단한다. 토요일·일요일만 빼거나 임의 공휴일 목록으로 추정하지 않는다. 공식 달력 JSON을 캐시하며 필요 범위가 부족하거나 무효하면 재확보한다. 유효 캐시를 재사용하므로 임시 휴장 변경을 계속 실시간 감지하는 구현은 아니다.
 
 1. 설정 검증, 모드별 원장 및 잠금 확보, 로그·대시보드 준비.
 2. 이전 주문·체결을 대조하고 종료된 주문창의 잔량 취소를 처리한다.
 3. 공식 달력을 확보하고 오늘의 거래일·주문창·다음 일정을 판단한다.
-4. 설정 주문창 안의 예정일이면 직전 거래일에 저장한 공식 스냅샷으로 선정한다. 같은 실행일·동일 설정으로 이미 준비한 자료는 재사용한다.
-5. 현재 경고·가격·거래 가능 여부로 후보를 재검증하고 실행 계획을 저장한다.
+4. 단일 파일 운용은 거래일 08:00부터 전체 보통주의 직전 완료 거래일까지 1년 KIS 수정 일봉·최근 원주가를 증분 갱신하고 검증 스냅샷을 준비한다. 13:30에는 파일을 읽어 MARKET/DECILE 대상 집단을 선정한다. 당일 장중 일봉은 포함하지 않으며 선정 시각 이후 대량 수집을 다시 하지 않는다. 파일이 없는 호환 경로만 대상 집단 F+1 직접 수집을 유지한다.
+5. 현재 시장·십분위의 자료 완전성을 검증하고 보유 평가를 갱신한다. 미완성 자료는 오류로 표시하며 SERVICE_ERROR_RETRY_SECONDS 간격으로 재조회한다. 완성된 입력으로 선정한 뒤 현재 가격·경고를 재검증하고 실행 계획을 저장한다.
 6. 비선정 기존 종목 및 유지 종목 초과수량을 매도한다. 매도 미완료가 있으면 매수 단계로 무리하게 넘어가지 않는다.
 7. 실제 매도 후 현금·보유량으로 매수 계획을 다시 산정한다. 부족한 후보는 동일 신호의 차순위로 대체한다.
 8. 주문창 끝이면 미체결 잔량 취소를 요청한다. 취소 확인 전에는 완료로 가정하지 않는다. 같은 날 실행을 중복 시작하지 않는다.
-9. 매 거래일 `DATA_READY_TIME` 이후 자동 수집이 켜져 있으면 마감 자료를 수집·검증·저장하고 보유 평가 및 준비 상태를 기록한다.
-10. 대기 중 화면을 갱신하고 보유·선정·가상 보유 시세를 REST로 조회한다. 오류 발생 시 기록하고 설정 대기 후 다시 점검한다.
+9. 대기 중 화면을 갱신하고 보유·선정·가상 보유 시세를 REST로 조회한다. 오류 발생 시 기록하고 설정 대기 후 다시 점검한다.
 
-직전 거래일 공식 자료가 없으면 과거의 종목 마스터·시총을 오늘 자료로 재구성해 매매하지 않는다. 준비 실패로 신규 리밸런싱을 차단하되 회복 매도는 별도 검증을 통과해야 한다. 오래 걸리는 최초 달력·이력 수집은 진행 알림을 표시한다.
+예정시각 수집은 현재 명부·시총 기준임을 bootstrap_current 및 lineage.bootstrap으로 기록하고 과거 당시 명부·시총이라고 주장하지 않는다. 가격은 직전 거래일까지 사용하며 market_cap_actual_date는 미확인 상태를 보존한다. 자료가 주문창 종료까지 준비되지 않으면 DATA_NOT_READY_BEFORE_DEADLINE 사유로 SKIPPED를 영속 기록한다. 시작시각에는 스킵하지 않는다. 자료 부족 시 신규 리밸런싱을 차단하며 회복매도는 별도의 현재 거래·귀속 검증을 유지한다. 장 마감 수집 제거로 보유의 일봉 평가·5거래일 무거래 판정은 다음 예정 리밸런싱 수집 시점에 갱신된다. 비예정일에도 기존 exit_required 보유의 회복매도와 시세 표시·주문 복구는 계속한다.
 
 ## 5. 주문 및 모드 계약
 
@@ -113,6 +114,8 @@ BCSO/nightGap 구현을 참고했지만 RMMT 런타임이 해당 전략 폴더�
 | DEMO | 설정·원장 경로는 있으나 현재 주문 실행 지원을 완성하지 않아 차단 |
 
 인자 없는 `python main_rmmt.py`는 **service를 시작하며 실행 모드는 `.env`에서 읽는다**. 무조건 LIVE로 하드코딩하지 않는다. 사용자 운영 `.env`를 LIVE로 구성하면 인자 없이 실전 서비스가 실행된다. `.env.example`은 DRY_RUN과 실거래 비활성화 양식이다.
+
+전략은 `.env`의 STRATEGY로 선택하며 대소문자를 소문자로 정규화한다. CLI 전략 override는 구현하지 않는다. `REVERSE_EXECUTION_TIME`과 `REVERSE_MOMENTUM_CAPITAL_MANWON`은 기존 설정키 이름을 유지하고 두 전략에 공통 적용한다. 시작 로그에는 실행 모드·전략 유형·전략 ID를, signal 명령 출력에는 전략 유형·전략 ID를 기록한다. 이번 선택 기능은 실주문 활성화 조건을 바꾸지 않는다.
 
 MARKET은 시장가, LIMIT은 최초 현재가 지정 후 가격 추격 없이 잔량 취소하는 CURRENT_NO_CHASE 정책이다. 시세·경고의 유효시간 및 주문창을 주문 전에 재확인한다. 주문 제출 전 의도(intent)를 저장하고 SUBMITTING으로 전환한다. 응답을 잃어 접수 여부가 불명확하면 UNKNOWN으로 두며 자동 재주문하지 않는다.
 
@@ -126,11 +129,11 @@ MARKET은 시장가, LIMIT은 최초 현재가 지정 후 가격 추격 없이 �
 
 신선한 시세이면 화면 현재금액(1주 현재가)과 평가금액(현재가×수량)을 갱신한다. 시세가 만료되면 원장 평가가격으로 되돌아가고 자료 시점을 표시한다. `exit_required` 보유는 0원 평가를 유지한다. 읽기 전용 dashboard 명령은 로컬 저장 자료만 읽으며 서비스처럼 KIS 시세를 계속 수집하지 않는다.
 
-스냅샷에는 신호일, 실행일, cutoff, 시장, 거래일 배열, 전체 보통주와 시총 기준일, 명목·분할조정 가격, 거래량, 경고 출처·시점·유효기간, 급변 이력 완전성, 자료 계보가 필요하다. 선정 후보는 symbol, formation_return, cap_rank, rank, selected를 갖는다. 당일 선정 메타데이터에는 selected_at, selection_date, config_hash, selection_positions를 저장한다. 상세 필드 검증은 strategy.validate_snapshot와 Etc/docs/KIS_API_CONTRACT.md를 따른다.
+스냅샷에는 신호일, 실행일, cutoff, 시장, 거래일 배열, 전체 보통주와 시총 기준일, 명목·KIS 수정 가격, 거래량, 경고 출처·시점·유효기간, 급변 이력 완전성, 자료 계보가 필요하다. 선정 후보는 symbol, formation_return, cap_rank, rank, selected를 갖는다. 당일 선정 메타데이터에는 selected_at, selection_date, selection_config_hash, selection_positions를 저장한다. 자료 수집은 전략 방향에 의존하지 않지만 선정 메타데이터는 현재 설정 해시와 일치해야 한다. 전략 변경 또는 Config 필드 추가로 해시가 바뀌면 기존 선정 결과를 그대로 실행하지 않고 재선정한다. 가격 필드는 adjusted_close, 원주가 필드는 nominal_close이며 과거 split_adjusted_close/YAHOO/SPLIT_ONLY 입력은 새 실전 신호로 재사용하지 않는다. collection_scope=ALL_MARKETS_CAPS_TARGET_HISTORY와 history_selection(market, decile, formation_days)은 실제 조회 대상 설정을 기록한다. 상세 필드 검증은 strategy.validate_snapshot와 Etc/docs/KIS_API_CONTRACT.md를 따른다.
 
 ## 7. 터미널 대시보드
 
-상단은 전략이름, 프로그램 시작시간, 업데이트, KIS 접속 환경, 선정 요약, 다음 두 일정 순이다. 실행상태 및 자료상태 독립 라인은 표시하지 않는다. 주문 차단 사유는 별도로 표시한다. 선정 요약은 `20종목 선정완료(평균 … / 중위 …)` 형식이다. 다음 일정은 예정 시각과 선정 완료 직후 리밸런싱 관계를 보여준다.
+상단은 전략이름(전략 ID 및 역모멘텀/모멘텀 한글 유형), 프로그램 시작시간, 업데이트, KIS 접속 환경, 선정 요약, 다음 두 일정 순이다. 현재처리와 단계별 진행상황을 표시한다. 수집·검증·선정·매도·매수 각각에 대기/진행 중/완료/오류/시간 초과/일부 미체결·미주문/미실행 상태, 처리 수와 비율, 공급원·종목·오류 및 재조회 대기시간을 표시한다. 상태 전환은 즉시 출력하고 반복 진행량은 화면 갱신 주기로 출력한다. 다음 단계는 앞선 오류·시간 초과 시 미실행으로 표시한다. 단계 상태는 현재 프로세스의 표시 정보이며 실행·주문 중복 제한은 기존 영속 원장이 담당한다. 주문 차단 사유는 별도로 표시한다. 선정 요약은 `20종목 선정완료(평균 … / 중위 …)` 형식이다. 다음 일정은 예정 시각과 선정 완료 직후 리밸런싱 관계를 보여준다.
 
 요약은 전략현금·주문예약금·가용현금, 투자상한, 누적손익, 최근거래를 표시한다. 누적손익은 전략자산에서 외부 현금흐름을 차감한 값이며 가상 보유를 제외한다. 최근거래는 최근 실제 매도 주문의 체결 손익·비용 기준 수익률·날짜이며 수수료 정정과 권리변동 이력을 반영한다.
 
@@ -168,7 +171,7 @@ system/screen 로그는 기본 10MiB마다 회전하고 이전 5개를 보관한
 
 SQLite는 WAL 및 foreign_keys를 사용한다. 금액은 Decimal을 사용하고 DB에는 문자열로 저장한다. 주요 테이블:
 
-- meta: 현금, 초기자산, 투자상한, 모드 등.
+- meta: 현금, 초기자산, 투자상한, 모드, 전략 유형(strategy) 등.
 - positions: 귀속수량, 잔여 취득원가, mark, exit_required, valuation_status.
 - runs: 날짜·종류별 유일 실행, config_hash, 상태, 선정 당시 보유량 등 payload.
 - orders: 주문 의도, 방향·수량·가격경계·상태·증권사번호·지점·누적체결·예약금.
@@ -180,6 +183,12 @@ SQLite는 WAL 및 foreign_keys를 사용한다. 금액은 Decimal을 사용하�
 - audit: 실행 계획, 후보 대체, 필터 차단, 취소 미확인 등 상세 감사.
 
 모드별 DB를 혼용하지 않으며 프로세스는 원장 경로별 flock으로 중복 사용을 막는다. 같은 날짜·실행 종류 UNIQUE 제약과 의도 저장으로 재시작 중복 주문을 차단한다. 전략 귀속수량보다 계좌 실제 잔고가 적으면 실행을 차단하여 수동 거래·타 전략 간섭을 먼저 확인한다.
+
+원장 하나는 한 전략 유형에 귀속된다. 신규 원장은 meta.strategy를 저장하고 기존 원장 열기는 읽기 전용 여부와 관계없이 설정의 전략 유형을 검사한다. 전략 불일치는 스키마 갱신·투자상한 변경·KIS 주문 접속 전에 차단한다. strategy가 없는 기존 원장은 역모멘텀으로 간주하며 역모멘텀 쓰기 접속에서만 해당 메타데이터를 보완한다. 읽기 전용 접속은 보완하지 않는다. 기존 원장을 다른 전략으로 자동 전환하거나 보유·주문 이력을 이관하는 기능은 구현하지 않는다.
+
+Config.database_path()는 실행 모드의 DB 설정을 기준으로 STRATEGY=reverse이면 설정 경로를 그대로 사용하고 momentum이면 파일명 앞에 momentum_을 자동 적용한다. 기본 LIVE 설정은 역모멘텀 rmmt/data/live.sqlite, 모멘텀 rmmt/data/momentum_live.sqlite를 선택하며 PAPER/DRY_RUN/DEMO에도 같은 규칙을 적용한다. 설정의 원본 db_* 필드와 디렉터리는 변경하지 않고 선택 경로만 계산한다. 이미 momentum_으로 시작하는 파일명은 유지하므로 이전 수동 모멘텀 경로 설정에 접두사를 중복 적용하지 않는다. CLI --db는 자동 선택보다 우선하며 지정 경로를 그대로 사용한다. check 출력의 database_path는 설정으로 선택한 실제 경로이다. 자동 계산 경로에도 프로젝트 내부 경로 제한을 적용한다.
+
+별도 DB를 만들면 기존 전략/계좌 보유가 자동 귀속되지 않으므로 기존 보유·미완료 주문은 원래 전략 설정과 원장에서 관리한다. 단일 DB에서 두 전략 동시 운용은 지원하지 않는다. 병행 시 선정·평가·준비 상태·로그 경로도 분리해야 하며 계좌 현금 배정·미체결 주문 충돌·API 요청 한도는 별도 검토 대상이다. 이번 자동 선택은 DB 경로에만 적용하며 다른 저장 경로·운영 .env·기존 파일을 자동 변경하거나 이동하지 않는다.
 
 ### 8.1 상세 오류 진단
 
@@ -209,6 +218,7 @@ Python 3 및 requirements-rmmt.txt의 requests가 필요하다. 금융 계산과
 | `cash-event --id … --type … --amount …` | DIVIDEND/FEE_ADJUSTMENT/RECOVERY 현금 사건 |
 | `corporate-action --id … --symbol … --quantity … --evidence …` | 근거 있는 권리변동 반영 |
 | `set-capital --amount …` | 초기자산·현금을 바꾸지 않고 투자상한 변경 사건 기록 (원 단위, 만원 배수) |
+| `rearm-empty --date YYYY-MM-DD --at HH:MM --reason …` | 오늘 주문 없는 COMPLETE 리밸런싱을 감사 기록 후 한 번 재예약. 증권사 접속·주문 없음. 당일만 지정 시각 적용. |
 
 운영 중 투자상한을 바꿀 때 .env의 REVERSE_MOMENTUM_CAPITAL_MANWON을 수정하고 재시작한다. 쓰기 가능한 원장을 열 때 투자상한을 자동 동기화하고 CAPITAL_LIMIT_CHANGE 감사 사건(source=ENV)을 기록한다. 현금·초기자산·보유수량·예약금은 변경하지 않는다. 읽기 전용 조회는 원장을 변경하지 않는다. 기존 set-capital 명령은 선택적으로 남지만 다음 시작에서는 .env가 우선한다. UNKNOWN은 증권사 주문 내역을 확인하여 bind-order로 귀속한 후 reconcile한다. 접수 여부가 불명확한 주문을 DB 삭제로 해결하거나 재매수하지 않는다. Ctrl+C는 정상 종료 요청으로 다루지만 증권사에 접수된 주문은 프로세스 종료만으로 없어지지 않는다.
 
@@ -218,7 +228,7 @@ Python 3 및 requirements-rmmt.txt의 requests가 필요하다. 금융 계산과
 
 `python3 -m unittest discover -s Etc/tests`로 자동 검증한다. 테스트는 합성 자료·목/자체 모의체결을 중심으로 하며 실제 실계좌 주문을 실행하여 통과시킨 검증이 아니다. 변경 영역에 맞는 테스트를 수행하고 승인 없이 LIVE 서비스를 시작하지 않는다.
 
-현재 제한: RMMT 웹소켓 미구현, DEMO 주문 차단, 실제 공유계좌 현금 배분은 사용자 관리, 모든 주문 직전 필터 분기의 운영 알림 완전성 미보장, 공식 과거 경고 이력 기반 백테스트 완전성 미확보, 단일 KIS 가격 공급원 아님, 넓은 테이블의 자동 화면 분할 없음. 기존 연구용 웹 대시보드와 실전 터미널 화면은 분리되어 있다.
+현재 제한: RMMT 웹소켓 미구현, DEMO 주문 차단, 실제 공유계좌 현금 배분은 사용자 관리, 모든 주문 직전 필터 분기의 운영 알림 완전성 미보장, 공식 과거 경고 이력 기반 백테스트 완전성 미확보, 넓은 테이블의 자동 화면 분할 없음. 기존 연구용 웹 대시보드와 실전 터미널 화면은 분리되어 있다.
 
 ## 11. 문서 유지 관리 계약
 
@@ -228,115 +238,114 @@ Python 3 및 requirements-rmmt.txt의 requests가 필요하다. 금융 계산과
 
 ## 12. 전체 환경설정 사전
 
-다음 값은 **.env.example의 양식 값**이다. 실제 현재 운영값이 아니며, 비밀정보 항목은 값을 의도적으로 생략한다. 각 항목의 구체적 용도는 양식의 한글 주석을 기준으로 기록한다. bool은 true/false, 날짜는 ISO YYYY-MM-DD, 시각은 HH:MM이다. 초 단위 간격·최대 페이지 등은 양수이며 loader의 범위 검증을 따른다.
+다음 값은 **.env.example의 양식 값**이다. 실제 현재 운영값이 아니며, 비밀정보 항목은 값을 의도적으로 생략한다. 각 항목의 구체적 용도와 입력 가능한 값은 .env 및 양식의 한글 주석을 기준으로 기록한다. 모든 설정키 바로 위에 `# 입력 가능:` 주석으로 선택지·고정값·숫자 범위/단위·경로/인증 형식을 표시한다. 미확정 정책은 설정에 입력할 수 있어도 브로커 주문을 차단한다. 선택지의 대소문자 처리 및 숫자 범위는 현재 loader 검증을 따르며, 외부 발급 인증 정보는 정상 발급 형식을 안내한다. 주석 편집은 KEY=VALUE 줄·비밀값·설정 해시를 바꾸지 않는다.
 
-| 설정키 | 양식 값 | 의미 |
-|---|---|---|
-| `STRATEGY` | `reverse` | RMMT 전용 환경설정: 일정은 한국시간(KST) 기준이며 설정 변경은 재시작 후 적용됩니다. 비밀값을 공개하지 마세요. 전략 유형: reverse는 역모멘텀 전략입니다. |
-| `MARKET` | `KOSDAQ` | 투자 대상 시장: KOSDAQ(코스닥), KOSPI(코스피), COMBINED(두 시장 통합). 통합은 합친 전체 보통주의 시총으로 십분위를 계산합니다. |
-| `DECILE` | `1` | 시총 십분위: 0=전체, 1=최소 시총 집단, 10=최대 시총 집단. 0~10 정수만 허용합니다. |
-| `SKIP` | `0` | 포메이션 끝과 가격 기준일 사이의 건너뛰기 기간: 현재 0만 지원하며 직전 거래일 종가까지 사용합니다. |
-| `HOLDINGS` | `20` | 목표 선정 종목 수: 양의 정수로 설정하며 상한은 없습니다. 기본값은 20개이고 적격 종목이 부족하면 실제 선정 수로 균등 배분합니다. |
-| `TIMEZONE` | `Asia/Seoul` | 전략 일정의 기준 시간대: Asia/Seoul(한국시간)입니다. |
-| `REVERSE_EXECUTION_TIME` | `10:00` | 예정 거래일의 종목선정 시작 시각(KST, HH:MM): 09:00~15:00 설정 가능. 선정 완료 직후 리밸런싱하며 30분 뒤 주문창을 종료합니다. |
-| `EXECUTION_WINDOW_MINUTES` | `30` | 주문창 길이(분): 현재 30분만 지원하며 설정한 시작 시각에서 30분 뒤 잔량 취소를 요청합니다. |
-| `LATE_START_POLICY` | `WITHIN_WINDOW_ONLY` | 늦은 시작 정책: WITHIN_WINDOW_ONLY는 주문창 안에서만 최초 실행을 허용합니다. |
-| `REVERSE_MOMENTUM_CAPITAL_MANWON` | `1000` | 매매 가능 투자상한(만원 단위 양의 정수); 1000=1,000만원=10,000,000원 |
-| `CAPITAL_POLICY` | `FIXED_CAP` | 자본 운용 정책: FIXED_CAP은 수익이 나도 설정 투자상한을 유지합니다. |
-| `MIN_PRICE` | `1000` | 직전 거래일(신호 가격 기준일) 명목종가의 최소 허용 가격(원)입니다. |
-| `NO_TRADE_DAYS` | `5` | 보유종목을 0원 평가하는 연속 무거래 시장거래일 수: 현재 5일입니다. 실제 수량은 유지합니다. |
-| `PERSISTENT_JUMP_PCT` | `35` | 급변 관찰을 시작하는 가격 변동률의 절댓값 기준(%): 현재 35를 초과할 때입니다. |
-| `BUY_FEE` | `0.00015` | 매수 수수료 추정 비율: 0.00015는 0.015%입니다. 실제 비용 확인 후 차액을 조정합니다. |
-| `SELL_FEE` | `0.00015` | 매도 수수료 추정 비율: 0.00015는 0.015%입니다. 실제 비용 확인 후 차액을 조정합니다. |
-| `SELL_TAX` | `0.002` | 매도세 추정 비율: 0.002는 0.2%입니다. 실제 비용 확인 후 차액을 조정합니다. |
-| `ORDER_POLICY` | `MARKET` | 주문 방식: MARKET은 시장가, LIMIT은 지정가입니다. |
-| `LIMIT_POLICY` | `CURRENT_NO_CHASE` | 지정가 정책: CURRENT_NO_CHASE는 최초 현재가로 주문하고 추격 없이 주문창 종료 시 잔량을 취소합니다. |
-| `SHOCK_POLICY` | `EXCLUDE_EXIT_REBALANCE` | 지속 급변 처리: EXCLUDE_EXIT_REBALANCE는 신규 매수 제외를 유지하고 기존 보유를 다음 리밸런싱에서 매도합니다. |
-| `DIVIDEND_POLICY` | `RETAIN` | 배당 운용 정책: RETAIN은 확인된 RMMT 귀속 배당을 전략 현금에 유지합니다. |
-| `DESIGN_APPROVED` | `true` | 세부 전략 설계 승인 확인: true여야 브로커 주문 모드를 사용할 수 있습니다. 실거래 승인과는 별개입니다. |
-| `RUN_MODE` | `DRY_RUN` | 실행 모드: DRY_RUN은 주문 없음, PAPER는 자체 모의체결, LIVE는 실거래입니다. 현재 DEMO 주문 실행은 차단됩니다. |
-| `RMMT_LIVE_ENABLED` | `false` | 실거래 활성화 여부: 별도 승인 후에만 true로 변경합니다. LIVE 모드와 다른 안전 조건도 함께 충족해야 합니다. |
-| `KIS_ENV` | `real` | KIS 접속 환경: real은 실전 서버, demo는 모의 서버입니다. |
-| `KIS_REAL_APP_KEY` | 비공개 / 미기입 | KIS 실전 API 앱키(비밀정보): 로그와 보고서에 출력하지 않습니다. |
-| `KIS_REAL_APP_SECRET` | 비공개 / 미기입 | KIS 실전 API 앱시크릿(비밀정보): 로그와 보고서에 출력하지 않습니다. |
-| `KIS_REAL_ACCOUNT` | 비공개 / 미기입 | KIS 실전 계좌번호(비밀정보): 앞 8자리 계좌번호와 뒤 2자리 상품코드를 설정합니다. |
-| `KIS_DEMO_APP_KEY` | 비공개 / 미기입 | KIS 모의 API 앱키(비밀정보): 로그와 보고서에 출력하지 않습니다. |
-| `KIS_DEMO_APP_SECRET` | 비공개 / 미기입 | KIS 모의 API 앱시크릿(비밀정보): 로그와 보고서에 출력하지 않습니다. |
-| `KIS_DEMO_ACCOUNT` | 비공개 / 미기입 | KIS 모의 계좌번호(비밀정보): 앞 8자리 계좌번호와 뒤 2자리 상품코드를 설정합니다. |
-| `KIS_ACCOUNT_PRODUCT_CODE` | 비공개 / 미기입 | KIS 계좌 상품코드: 값이 있으면 계좌번호 뒤 2자리보다 우선하며 일반 위탁계좌는 보통 01입니다. |
-| `KIS_REST_MIN_INTERVAL_SECONDS` | `0.2` | RMMT의 KIS REST 요청 사이 최소 간격(초)입니다. |
-| `POLL_SECONDS` | `3` | 주문창 안의 체결 확인 및 서비스 점검 간격(초)입니다. |
-| `QUOTE_MAX_AGE_SECONDS` | `30` | 주문 판단에 사용할 현재가의 최대 허용 경과시간(초)입니다. |
-| `STATUS_MAX_AGE_SECONDS` | `60` | 매수 판단에 사용할 경고 상태 자료의 최대 허용 경과시간(초)입니다. |
-| `ACCOUNT_POLICY` | `SHARED_OWNED_ONLY` | 계좌 운용 정책: SHARED_OWNED_ONLY는 양 전략이 자기 귀속수량만 매도하는 동일 계좌 병행 정책입니다. |
-| `BCSO_STOP_CONFIRMED` | `false` | BCSO_STOPPED 계좌 정책을 선택했을 때 BCSO의 실제 중지 완료 확인값입니다. |
-| `BCSO_REFERENCE_ACCOUNT_SALT` | 비공개 / 미기입 | 기존 BCSO 계좌 지문 생성용 비밀값입니다. 계좌 분리 확인에 사용하며 임의 변경하지 않습니다. |
-| `BCSO_REFERENCE_ACCOUNT_HASH` | 비공개 / 미기입 | 기존 BCSO 계좌의 보호된 지문입니다. 계좌 분리 확인에 사용하며 임의 변경하지 않습니다. |
-| `BCSO_OWNERSHIP_FIX_CONFIRMED` | `false` | BCSO가 자기 귀속수량만 매도하도록 수정된 사실의 확인값입니다. 사용자가 수정 완료를 확인한 후에만 true로 변경합니다. |
-| `SHOCK_OBSERVATIONS` | `5` | 급변 이후 지속 여부를 확인할 유효 실제 거래 관측 수: 현재 5회입니다. |
-| `RMMT_DATA_DIR` | `rmmt/data` | 원본 자료·스냅샷·이력 캐시를 저장할 기본 데이터 폴더입니다. RMMT 폴더 안의 경로만 허용합니다. |
-| `RMMT_RESULTS_DIR` | `rmmt/results` | 실행별 CSV·JSON 보고서를 저장할 기본 결과 폴더입니다. |
-| `CALENDAR_PATH` | `rmmt/data/calendar.json` | 공식 시장거래일 달력 JSON 파일 경로입니다. |
-| `SIGNAL_SNAPSHOT_PATH` | `rmmt/data/signal_latest.json` | 예정 거래일 설정 시각 선정 결과의 입력 스냅샷 JSON 경로: 가격·시총 기준일은 직전 거래일입니다. |
-| `DAILY_SNAPSHOT_PATH` | `rmmt/data/daily_latest.json` | 최신 완료 거래일의 보유종목 평가 입력 JSON 파일 경로입니다. |
-| `QUOTE_SNAPSHOT_PATH` | `rmmt/data/examples/synthetic_quotes.json` | 계획·자체 모의체결에 사용할 현재가 JSON 파일 경로입니다. 기본 예시는 합성 자료입니다. |
-| `DRY_RUN_DB_PATH` | `rmmt/data/dry_run.sqlite` | 주문 없는 DRY_RUN 모드의 독립 SQLite 원장 경로입니다. |
-| `PAPER_DB_PATH` | `rmmt/data/paper.sqlite` | 자체 모의체결 PAPER 모드의 독립 SQLite 원장 경로입니다. |
-| `DEMO_DB_PATH` | `rmmt/data/demo.sqlite` | KIS 모의환경 DEMO 모드의 독립 SQLite 원장 경로입니다. 현재 DEMO 주문 실행은 지원하지 않습니다. |
-| `LIVE_DB_PATH` | `rmmt/data/live.sqlite` | 실거래 LIVE 모드의 독립 SQLite 원장 경로입니다. 다른 모드의 원장과 공유하지 않습니다. |
-| `KIS_REAL_TOKEN_CACHE_PATH` | `rmmt/data/.kis_token_real.json` | API가 발급한 실전 접속 토큰의 RMMT 전용 캐시 경로입니다. 파일 권한은 0600으로 관리합니다. |
-| `KIS_DEMO_TOKEN_CACHE_PATH` | `rmmt/data/.kis_token_demo.json` | API가 발급한 모의 접속 토큰의 RMMT 전용 캐시 경로입니다. 파일 권한은 0600으로 관리합니다. |
-| `SERVICE_AUTO_COLLECT` | `true` | 서비스의 마감 후 자동 데이터 수집 여부: true이면 DATA_READY_TIME 이후 KIS·Yahoo 자료를 수집합니다. |
-| `SERVICE_IDLE_SECONDS` | `30` | 설정한 주문창 이외의 서비스 반복 대기시간(초)입니다. |
-| `SERVICE_ERROR_RETRY_SECONDS` | `15` | 서비스 오류가 발생한 뒤 다음 점검 전에 추가로 기다릴 시간(초)입니다. |
-| `HTTP_CONNECT_TIMEOUT_SECONDS` | `5` | HTTP 연결 수립 제한시간(초)입니다. |
-| `KIS_REQUEST_TIMEOUT_SECONDS` | `20` | KIS REST 조회·주문 응답 및 토큰 발급 응답의 읽기 제한시간(초)입니다. |
-| `PUBLIC_DATA_TIMEOUT_SECONDS` | `30` | 공개 종목 마스터와 Yahoo 자료 응답의 읽기 제한시간(초)입니다. |
-| `KIS_HASH_TIMEOUT_SECONDS` | `15` | KIS 주문 본문 해시 발급 응답의 읽기 제한시간(초)입니다. |
-| `KIS_TOKEN_EXPIRY_MARGIN_SECONDS` | `60` | 토큰 만료 전에 갱신 필요 상태로 판단할 여유시간(초)입니다. |
-| `KIS_TOKEN_ISSUE_COOLDOWN_SECONDS` | `60` | 토큰 발급 재시도 사이 최소 대기시간(초): 60초 이상이어야 합니다. |
-| `KIS_MASTER_CACHE_SECONDS` | `45` | KIS 공식 종목 마스터를 재사용할 최대 캐시 시간(초)입니다. |
-| `KIS_ACCOUNT_MAX_PAGES` | 비공개 / 미기입 | 계좌·주문 연속조회에서 허용할 최대 페이지 수입니다. 초과 시 불완전 자료 사용을 중단합니다. |
-| `KIS_HISTORY_MAX_PAGES` | `500` | 종목별 과거 일봉 이력 조회에서 허용할 최대 페이지 수입니다. |
-| `KIS_HISTORY_OVERLAP_DAYS` | `10` | KIS 일봉 캐시 갱신 시 다시 조회할 최근 중첩 구간 길이(달력일)입니다. |
-| `KIS_HISTORY_CACHE_MAX_GAP_DAYS` | `100` | 최신 캐시와 수집일 사이에서 증분 갱신을 허용할 최대 간격(달력일)입니다. 초과 시 전체 이력을 다시 수집합니다. |
-| `COLLECTION_PROGRESS_INTERVAL` | `100` | 시총·이력 수집의 진행 알림 간격(종목 수) 및 달력 수집의 진행 알림 간격(조회 날짜 수)입니다. |
-| `CALENDAR_MAX_RANGE_DAYS` | `2000` | 한 번에 공식 달력을 수집할 수 있는 시작일·종료일 간 최대 간격(달력일)입니다. |
-| `DATA_READY_TIME` | `16:00` | 매 거래일 마감 자료 수집을 시작할 수 있는 시각(HH:MM, KST): 다음 예정일 설정 시각 선정에 사용할 자료를 미리 저장합니다. |
-| `KIS_REAL_ACCOUNT_PASSWORD` | 비공개 / 미기입 | 선택적 실전 계좌 비밀번호(비밀정보): 현재 KIS REST 구현에서는 사용하거나 전송하지 않습니다. |
-| `KIS_DEMO_ACCOUNT_PASSWORD` | 비공개 / 미기입 | 선택적 모의 계좌 비밀번호(비밀정보): 현재 KIS REST 구현에서는 사용하거나 전송하지 않습니다. |
-| `KIS_REAL_HTS_ID` | 비공개 / 미기입 | 선택적 KIS 실전 HTS 사용자 ID: 현재 REST 구현에서는 사용하거나 전송하지 않습니다. |
-| `KIS_DEMO_HTS_ID` | 비공개 / 미기입 | 선택적 KIS 모의 HTS 사용자 ID: 현재 REST 구현에서는 사용하거나 전송하지 않습니다. |
-| `EXCLUDE_REGULATORY_MANAGED` | `true` | 관리종목 제외 여부: true는 제외 적용, false는 이 경고 자체로는 제외하지 않음입니다. |
-| `EXCLUDE_REGULATORY_CAUTIONARY` | `true` | 투자주의환기종목 제외 여부: true는 제외 적용, false는 이 경고 자체로는 제외하지 않음입니다. |
-| `EXCLUDE_REGULATORY_CAUTION` | `true` | 투자주의종목 제외 여부: true는 제외 적용, false는 이 경고 자체로는 제외하지 않음입니다. |
-| `EXCLUDE_REGULATORY_WARNING` | `true` | 투자경고종목 제외 여부: true는 제외 적용, false는 이 경고 자체로는 제외하지 않음입니다. |
-| `EXCLUDE_REGULATORY_RISK` | `true` | 투자위험종목 제외 여부: true는 제외 적용, false는 이 경고 자체로는 제외하지 않음입니다. |
-| `SYSTEM_LOG_PATH` | `rmmt/logs/system.log` | 운영 상태와 주문 상태 변경 및 오류 기록 경로 |
-| `TRADING_LOG_PATH` | `rmmt/logs/trading.log` | 확정 체결과 비용 정정 CSV 기록 경로; 전체 이력 유지 |
-| `SCREEN_LOG_PATH` | `rmmt/logs/screen.log` | 화면 출력 및 상세 JSON 진단 기록 경로: 상세 JSON은 대시보드에서 생략해도 파일에는 남습니다. |
-| `LOG_MAX_BYTES` | `10485760` | system 및 screen 로그의 파일당 최대 바이트; 초과 시 회전 |
-| `LOG_BACKUP_COUNT` | `5` | system 및 screen 로그별 이전 파일 보관 개수 |
-| `DASHBOARD_ENABLED` | `true` | 터미널 대시보드 표시 여부: true는 필요한 상태·알림 중심 화면, false는 명령의 JSON 출력을 사용합니다. |
-| `DASHBOARD_REFRESH_SECONDS` | `3` | 대시보드의 일반 갱신 간격(초): 상태 변경·수집 진행 알림은 즉시 갱신할 수 있습니다. |
-| `DASHBOARD_RECENT_LINES` | `10` | 대시보드에 표시할 최근 중요 알림의 최대 줄 수: 반복 대기는 생략하고 진행률은 최신 값으로 갱신합니다. |
-| `BOOTSTRAP_CALENDAR_PAST_DAYS` | `120` | 과거 달력 확보의 기본 일수(달력일, 최소 60): 포메이션 길이와 리밸런싱 기준일에 맞춰 실제 조회 범위를 늘립니다. |
-| `BOOTSTRAP_CALENDAR_FUTURE_DAYS` | `45` | 미래 달력 확보의 기본 일수(달력일, 최소 14): 리밸런싱 간격에 맞춰 실제 조회 범위를 늘립니다. |
-| `PREPARATION_STATE_PATH` | `rmmt/data/preparation_state.json` | 마감 자료 수집 완료 상태 기록 파일; 재시작 시 중복 수집 방지 |
-| `FORMATION_DAYS` | `21` | 포메이션 수익률 계산 간격(거래일, 정수 5~504): 1주=5, 1개월=21, 1년=252, 24개월=504. 종가 자료는 설정값+1개가 필요합니다. |
-| `REBALANCE_DAYS` | `5` | 선정·리밸런싱 간격(거래일, 정수 1~252): 매일=1, 1주=5, 1개월=21, 1년=252. 주·월·년 환산은 근사치이며 휴장일은 세지 않습니다. |
-| `REBALANCE_ANCHOR_DATE` | `2026-10-12` | 선정·리밸런싱 시작 기준일(YYYY-MM-DD): 휴장이면 다음 첫 거래일을 기준으로 N거래일마다 설정 시각 선정 후 즉시 매매합니다. 재시작해도 기준은 유지됩니다. |
-| `PREVIEW_HOLDING_ENABLED` | `false` | 대시보드 표시용 가상 보유: false로 바꾸면 제거합니다. 실제 원장·매매·전략손익에는 반영하지 않습니다. |
-| `PREVIEW_HOLDING_SYMBOL` | `005930` | 표시용 가상 보유 종목코드 |
-| `PREVIEW_HOLDING_NAME` | `삼성전자` | 표시용 가상 보유 종목명 |
-| `PREVIEW_HOLDING_QUANTITY` | `10` | 표시용 가상 보유 수량(주) |
-| `PREVIEW_HOLDING_PRICE` | `271500` | 표시용 가상 보유 평단 및 평가가격(원) |
-| `DASHBOARD_QUOTE_REFRESH_SECONDS` | `5` | 보유·선정·가상 종목의 대시보드 현재가 REST 조회 최소 간격(초): 웹소켓이 아닌 주기 조회이며 조회량에 따라 지연될 수 있습니다. |
-| `PREVIEW_EXTRA_HOLDINGS` | `9종목 예시 목록 (형식은 아래 설명)` | 추가 화면 표시용 가상 보유: 코드,이름,수량,가상평단(원); 종목 간 세미콜론 구분. 실제 매매·원장·손익에 반영하지 않으며 비우면 제거됩니다. 평단은 시세가 아닌 예시값입니다. |
+| 설정키 | 양식 값 | 의미 | 입력 가능한 값·범위 |
+|---|---|---|---|
+| `STRATEGY` | `reverse` | reverse=수익률 낮은 순(역모멘텀), momentum=높은 순(모멘텀). 대소문자 정규화, momentum은 DB 파일명에 momentum_ 자동 적용. | reverse(역모멘텀) / momentum(모멘텀), 대소문자 허용. momentum은 DB 파일명에 momentum_ 자동 적용. |
+| `MARKET` | `KOSDAQ` | 투자 대상 시장: KOSDAQ(코스닥), KOSPI(코스피), COMBINED(두 시장 통합). 통합은 합친 전체 보통주의 시총으로 십분위를 계산합니다. | KOSDAQ / KOSPI / COMBINED, 대소문자 허용. |
+| `DECILE` | `1` | 시총 십분위: 0=전체, 1=최소 시총 집단, 10=최대 시총 집단. 0~10 정수만 허용합니다. | 0~10 정수. 0=전체, 1=최소 시총, 10=최대 시총. |
+| `SKIP` | `0` | 포메이션 끝과 가격 기준일 사이의 건너뛰기 기간: 현재 0만 지원하며 직전 거래일 종가까지 사용합니다. | 0만 지원(고정값). |
+| `HOLDINGS` | `20` | 목표 선정 종목 수: 양의 정수로 설정하며 상한은 없습니다. 기본값은 20개이고 적격 종목이 부족하면 실제 선정 수로 균등 배분합니다. | 1 이상 정수(종목 수), 별도 상한 없음. |
+| `TIMEZONE` | `Asia/Seoul` | 전략 일정의 기준 시간대: Asia/Seoul(한국시간)입니다. | Asia/Seoul만 지원(고정값). |
+| `REVERSE_EXECUTION_TIME` | `10:00` | 두 전략 공통 증분 수집 시작 시각(KST, HH:MM): 09:00~15:00. 수집·검증·선정·매도·매수 전체에 30분 주문창 적용. | 09:00~15:00의 HH:MM(KST). 두 전략 공통, 주문창은 시작부터 30분. |
+| `EXECUTION_WINDOW_MINUTES` | `30` | 주문창 길이(분): 현재 30분만 지원하며 설정한 시작 시각에서 30분 뒤 잔량 취소를 요청합니다. | 30만 지원(고정값). |
+| `LATE_START_POLICY` | `WITHIN_WINDOW_ONLY` | 늦은 시작 정책: WITHIN_WINDOW_ONLY는 주문창 안에서만 최초 실행을 허용합니다. | WITHIN_WINDOW_ONLY만 지원(고정값). |
+| `REVERSE_MOMENTUM_CAPITAL_MANWON` | `1000` | 두 전략 공통 투자상한(만원 단위 양의 정수). 기존 키 이름 유지, 1000=1,000만원=10,000,000원. | 1 이상 정수(만원 단위). 예: 1000=1,000만원. 두 전략 공통. |
+| `CAPITAL_POLICY` | `FIXED_CAP` | 자본 운용 정책: FIXED_CAP은 수익이 나도 설정 투자상한을 유지합니다. | FIXED_CAP만 지원(고정값). |
+| `MIN_PRICE` | `1000` | 직전 거래일(신호 가격 기준일) 명목종가의 최소 허용 가격(원)입니다. | 0보다 큰 유한한 숫자(원 단위). |
+| `NO_TRADE_DAYS` | `5` | 보유종목을 0원 평가하는 연속 무거래 시장거래일 수: 현재 5일입니다. 실제 수량은 유지합니다. | 5만 지원(고정값). |
+| `PERSISTENT_JUMP_PCT` | `35` | 급변 관찰을 시작하는 가격 변동률의 절댓값 기준(%): 현재 35를 초과할 때입니다. | 35만 지원(고정값). |
+| `BUY_FEE` | `0.00015` | 매수 수수료 추정 비율: 0.00015는 0.015%입니다. 실제 비용 확인 후 차액을 조정합니다. | 0 이상 0.1 미만의 비율. 예: 0.00015=0.015%. |
+| `SELL_FEE` | `0.00015` | 매도 수수료 추정 비율: 0.00015는 0.015%입니다. 실제 비용 확인 후 차액을 조정합니다. | 0 이상 0.1 미만의 비율. 예: 0.00015=0.015%. |
+| `SELL_TAX` | `0.002` | 매도세 추정 비율: 0.002는 0.2%입니다. 실제 비용 확인 후 차액을 조정합니다. | 0 이상 0.1 미만의 비율. 예: 0.002=0.2%. |
+| `ORDER_POLICY` | `MARKET` | 주문 방식: MARKET은 시장가, LIMIT은 지정가입니다. | MARKET(시장가) / LIMIT(현재가 지정가), 대소문자 허용. |
+| `LIMIT_POLICY` | `CURRENT_NO_CHASE` | 지정가 정책: CURRENT_NO_CHASE는 최초 현재가로 주문하고 추격 없이 주문창 종료 시 잔량을 취소합니다. | CURRENT_NO_CHASE(지원 지정가 정책) / UNRESOLVED(미확정). LIMIT 브로커 주문은 CURRENT_NO_CHASE만 지원. |
+| `SHOCK_POLICY` | `EXCLUDE_EXIT_REBALANCE` | 지속 급변 처리: EXCLUDE_EXIT_REBALANCE는 신규 매수 제외를 유지하고 기존 보유를 다음 리밸런싱에서 매도합니다. | EXCLUDE_EXIT_REBALANCE(급변 제외·리밸런싱 청산) / UNRESOLVED(미확정, 브로커 주문 차단). |
+| `DIVIDEND_POLICY` | `RETAIN` | 배당 운용 정책: RETAIN은 확인된 RMMT 귀속 배당을 전략 현금에 유지합니다. | RETAIN(귀속 배당 현금 유지) / UNRESOLVED(미확정, 브로커 주문 차단). |
+| `DESIGN_APPROVED` | `true` | 세부 전략 설계 승인 확인: true여야 브로커 주문 모드를 사용할 수 있습니다. 실거래 승인과는 별개입니다. | true / false, 대소문자 허용. |
+| `RUN_MODE` | `DRY_RUN` | 실행 모드: DRY_RUN은 주문 없음, PAPER는 자체 모의체결, LIVE는 실거래입니다. 현재 DEMO 주문 실행은 차단됩니다. | DRY_RUN(주문 없음) / PAPER(자체 모의체결) / DEMO(KIS 모의, 현재 주문 실행 미지원) / LIVE(실거래), 대소문자 허용. |
+| `RMMT_LIVE_ENABLED` | `false` | 실거래 활성화 여부: 별도 승인 후에만 true로 변경합니다. LIVE 모드와 다른 안전 조건도 함께 충족해야 합니다. | true / false, 대소문자 허용. |
+| `KIS_ENV` | `real` | KIS 접속 환경: real은 실전 서버, demo는 모의 서버입니다. | real(실전 서버) / demo(모의 서버). LIVE는 real, DEMO는 demo 필요. |
+| `KIS_REAL_APP_KEY` | 비공개 / 미기입 | KIS 실전 API 앱키(비밀정보): 로그와 보고서에 출력하지 않습니다. | KIS에서 발급받은 비밀 문자열 또는 빈 문자열. 해당 서버에 실제 접속할 때 필수. |
+| `KIS_REAL_APP_SECRET` | 비공개 / 미기입 | KIS 실전 API 앱시크릿(비밀정보): 로그와 보고서에 출력하지 않습니다. | KIS에서 발급받은 비밀 문자열 또는 빈 문자열. 해당 서버에 실제 접속할 때 필수. |
+| `KIS_REAL_ACCOUNT` | 비공개 / 미기입 | KIS 실전 계좌번호(비밀정보): 앞 8자리 계좌번호와 뒤 2자리 상품코드를 설정합니다. | 계좌번호 8자리 숫자 또는 8자리-2자리/연속 10자리 형식. 해당 서버에 접속할 때 필수, 비밀값은 그대로 유지. |
+| `KIS_DEMO_APP_KEY` | 비공개 / 미기입 | KIS 모의 API 앱키(비밀정보): 로그와 보고서에 출력하지 않습니다. | KIS에서 발급받은 비밀 문자열 또는 빈 문자열. 해당 서버에 실제 접속할 때 필수. |
+| `KIS_DEMO_APP_SECRET` | 비공개 / 미기입 | KIS 모의 API 앱시크릿(비밀정보): 로그와 보고서에 출력하지 않습니다. | KIS에서 발급받은 비밀 문자열 또는 빈 문자열. 해당 서버에 실제 접속할 때 필수. |
+| `KIS_DEMO_ACCOUNT` | 비공개 / 미기입 | KIS 모의 계좌번호(비밀정보): 앞 8자리 계좌번호와 뒤 2자리 상품코드를 설정합니다. | 계좌번호 8자리 숫자 또는 8자리-2자리/연속 10자리 형식. 해당 서버에 접속할 때 필수, 비밀값은 그대로 유지. |
+| `KIS_ACCOUNT_PRODUCT_CODE` | `01` | KIS 계좌 상품코드: 값이 있으면 계좌번호 뒤 2자리보다 우선하며 일반 위탁계좌는 보통 01입니다. | 2자리 숫자 상품코드(일반 위탁 예: 01) 또는 빈 문자열(계좌 뒤 2자리, 없으면 01 사용). |
+| `KIS_REST_MIN_INTERVAL_SECONDS` | `0.2` | RMMT의 KIS REST 요청 사이 최소 간격(초)입니다. | 0보다 큰 유한한 숫자(초 단위, 소수 허용). |
+| `POLL_SECONDS` | `3` | 주문창 안의 체결 확인 및 서비스 점검 간격(초)입니다. | 0보다 큰 유한한 숫자(초 단위, 소수 허용). |
+| `QUOTE_MAX_AGE_SECONDS` | `30` | 주문 판단에 사용할 현재가의 최대 허용 경과시간(초)입니다. | 1 이상 정수(초 단위). |
+| `STATUS_MAX_AGE_SECONDS` | `60` | 매수 판단에 사용할 경고 상태 자료의 최대 허용 경과시간(초)입니다. | 1 이상 정수(초 단위). |
+| `ACCOUNT_POLICY` | `SHARED_OWNED_ONLY` | 계좌 운용 정책: SHARED_OWNED_ONLY는 양 전략이 자기 귀속수량만 매도하는 동일 계좌 병행 정책입니다. | SEPARATE / BCSO_STOPPED / SHARED_OWNED_ONLY / UNRESOLVED / DEFERRED. LIVE는 앞의 세 정책과 각 확인 조건 충족 필요. |
+| `BCSO_STOP_CONFIRMED` | `false` | BCSO_STOPPED 계좌 정책을 선택했을 때 BCSO의 실제 중지 완료 확인값입니다. | true / false, 대소문자 허용. |
+| `BCSO_REFERENCE_ACCOUNT_SALT` | 비공개 / 미기입 | 기존 BCSO 계좌 지문 생성용 비밀값입니다. 계좌 분리 확인에 사용하며 임의 변경하지 않습니다. | 빈 문자열 또는 계좌 지문 생성용 비밀 문자열. SEPARATE 확인에는 정상 salt와 hash 모두 필요. |
+| `BCSO_REFERENCE_ACCOUNT_HASH` | 비공개 / 미기입 | 기존 BCSO 계좌의 보호된 지문입니다. 계좌 분리 확인에 사용하며 임의 변경하지 않습니다. | 빈 문자열 또는 계좌 지문의 HMAC-SHA256 16진수 문자열(정상 형식 64자). SEPARATE 확인에 사용. |
+| `BCSO_OWNERSHIP_FIX_CONFIRMED` | `false` | BCSO가 자기 귀속수량만 매도하도록 수정된 사실의 확인값입니다. 사용자가 수정 완료를 확인한 후에만 true로 변경합니다. | true / false, 대소문자 허용. |
+| `SHOCK_OBSERVATIONS` | `5` | 급변 이후 지속 여부를 확인할 유효 실제 거래 관측 수: 현재 5회입니다. | 5만 지원(고정값). |
+| `RMMT_DATA_DIR` | `rmmt/data` | 원본 자료·스냅샷·이력 캐시를 저장할 기본 데이터 폴더입니다. RMMT 폴더 안의 경로만 허용합니다. | 프로젝트 폴더 안의 상대/절대 폴더 경로. 프로젝트 밖 경로는 허용하지 않음. |
+| `RMMT_RESULTS_DIR` | `rmmt/results` | 실행별 CSV·JSON 보고서를 저장할 기본 결과 폴더입니다. | 프로젝트 폴더 안의 상대/절대 폴더 경로. 프로젝트 밖 경로는 허용하지 않음. |
+| `CALENDAR_PATH` | `rmmt/data/calendar.json` | 공식 시장거래일 달력 JSON 파일 경로입니다. | 프로젝트 폴더 안의 상대/절대 파일 경로. 프로젝트 밖 경로는 허용하지 않음. |
+| `SIGNAL_SNAPSHOT_PATH` | `rmmt/data/signal_latest.json` | 예정 거래일 설정 시각 선정 결과의 입력 스냅샷 JSON 경로: 가격·시총 기준일은 직전 거래일입니다. | 프로젝트 폴더 안의 상대/절대 파일 경로. 프로젝트 밖 경로는 허용하지 않음. |
+| `DAILY_SNAPSHOT_PATH` | `rmmt/data/daily_latest.json` | 최신 완료 거래일의 보유종목 평가 입력 JSON 파일 경로입니다. | 프로젝트 폴더 안의 상대/절대 파일 경로. 프로젝트 밖 경로는 허용하지 않음. |
+| `QUOTE_SNAPSHOT_PATH` | `rmmt/data/examples/synthetic_quotes.json` | 계획·자체 모의체결에 사용할 현재가 JSON 파일 경로입니다. 기본 예시는 합성 자료입니다. | 프로젝트 폴더 안의 상대/절대 파일 경로. 프로젝트 밖 경로는 허용하지 않음. |
+| `DRY_RUN_DB_PATH` | `rmmt/data/dry_run.sqlite` | DRY_RUN 원장 기준 경로. momentum은 파일명에 momentum_ 자동 적용, --db 우선. | 프로젝트 폴더 안의 상대/절대 파일 경로. 프로젝트 밖 경로는 허용하지 않음. momentum은 파일명 앞에 momentum_ 자동 적용(이미 있으면 유지), --db 우선. |
+| `PAPER_DB_PATH` | `rmmt/data/paper.sqlite` | PAPER 원장 기준 경로. momentum은 파일명에 momentum_ 자동 적용, --db 우선. | 프로젝트 폴더 안의 상대/절대 파일 경로. 프로젝트 밖 경로는 허용하지 않음. momentum은 파일명 앞에 momentum_ 자동 적용(이미 있으면 유지), --db 우선. |
+| `DEMO_DB_PATH` | `rmmt/data/demo.sqlite` | DEMO 원장 기준 경로. momentum은 파일명에 momentum_ 자동 적용. 현재 DEMO 주문 실행 미지원. | 프로젝트 폴더 안의 상대/절대 파일 경로. 프로젝트 밖 경로는 허용하지 않음. momentum은 파일명 앞에 momentum_ 자동 적용(이미 있으면 유지), --db 우선. |
+| `LIVE_DB_PATH` | `rmmt/data/live.sqlite` | LIVE 원장 기준 경로. reverse는 그대로, momentum은 momentum_live.sqlite 자동 선택. 이미 momentum_으로 시작하면 유지, --db 우선. | 프로젝트 폴더 안의 상대/절대 파일 경로. 프로젝트 밖 경로는 허용하지 않음. momentum은 파일명 앞에 momentum_ 자동 적용(이미 있으면 유지), --db 우선. |
+| `KIS_REAL_TOKEN_CACHE_PATH` | `rmmt/data/.kis_token_real.json` | API가 발급한 실전 접속 토큰의 RMMT 전용 캐시 경로입니다. 파일 권한은 0600으로 관리합니다. | 프로젝트 폴더 안의 상대/절대 파일 경로. 프로젝트 밖 경로는 허용하지 않음. |
+| `KIS_DEMO_TOKEN_CACHE_PATH` | `rmmt/data/.kis_token_demo.json` | API가 발급한 모의 접속 토큰의 RMMT 전용 캐시 경로입니다. 파일 권한은 0600으로 관리합니다. | 프로젝트 폴더 안의 상대/절대 파일 경로. 프로젝트 밖 경로는 허용하지 않음. |
+| `SERVICE_AUTO_COLLECT` | `true` | 호환용 미사용 설정. 서비스는 값과 관계없이 예정 리밸런싱 시각에 증분 수집합니다. | true / false, 대소문자 허용. |
+| `SERVICE_IDLE_SECONDS` | `30` | 설정한 주문창 이외의 서비스 반복 대기시간(초)입니다. | 0보다 큰 유한한 숫자(초 단위, 소수 허용). |
+| `SERVICE_ERROR_RETRY_SECONDS` | `15` | 서비스 오류가 발생한 뒤 다음 점검 전에 추가로 기다릴 시간(초)입니다. | 0보다 큰 유한한 숫자(초 단위, 소수 허용). |
+| `HTTP_CONNECT_TIMEOUT_SECONDS` | `5` | HTTP 연결 수립 제한시간(초)입니다. | 0보다 큰 유한한 숫자(초 단위, 소수 허용). |
+| `KIS_REQUEST_TIMEOUT_SECONDS` | `20` | KIS REST 조회·주문 응답 및 토큰 발급 응답의 읽기 제한시간(초)입니다. | 0보다 큰 유한한 숫자(초 단위, 소수 허용). |
+| `PUBLIC_DATA_TIMEOUT_SECONDS` | `30` | 공개 종목 마스터 응답의 읽기 제한시간(초)입니다. Yahoo는 실전 수집에서 사용하지 않습니다. | 0보다 큰 유한한 숫자(초 단위, 소수 허용). |
+| `KIS_HASH_TIMEOUT_SECONDS` | `15` | KIS 주문 본문 해시 발급 응답의 읽기 제한시간(초)입니다. | 0보다 큰 유한한 숫자(초 단위, 소수 허용). |
+| `KIS_TOKEN_EXPIRY_MARGIN_SECONDS` | `60` | 토큰 만료 전에 갱신 필요 상태로 판단할 여유시간(초)입니다. | 1 이상 정수(초 단위). |
+| `KIS_TOKEN_ISSUE_COOLDOWN_SECONDS` | `60` | 토큰 발급 재시도 사이 최소 대기시간(초): 60초 이상이어야 합니다. | 60 이상 정수(초 단위). |
+| `KIS_MASTER_CACHE_SECONDS` | `45` | KIS 공식 종목 마스터를 재사용할 최대 캐시 시간(초)입니다. | 1 이상 정수(초 단위). |
+| `KIS_ACCOUNT_MAX_PAGES` | `100` | 계좌·주문 연속조회에서 허용할 최대 페이지 수입니다. 초과 시 불완전 자료 사용을 중단합니다. | 1 이상 정수(페이지 단위). |
+| `KIS_HISTORY_MAX_PAGES` | `500` | 종목별 과거 일봉 이력 조회에서 허용할 최대 페이지 수입니다. | 1 이상 정수(페이지 단위). |
+| `KIS_HISTORY_OVERLAP_DAYS` | `10` | KIS 원주가 증분 캐시의 중첩 구간(달력일)입니다. 수정주가는 새 기준일에 필요한 F+1 구간을 재조회합니다. | 1 이상 정수(달력일 단위). |
+| `KIS_HISTORY_CACHE_MAX_GAP_DAYS` | `100` | 원주가 캐시의 증분 갱신 최대 간격(달력일)입니다. 초과 시 필요한 포메이션 구간을 다시 조회합니다. | 1 이상 정수(달력일 단위). |
+| `COLLECTION_PROGRESS_INTERVAL` | `100` | 시총·이력 수집의 진행 알림 간격(종목 수) 및 달력 수집의 진행 알림 간격(조회 날짜 수)입니다. | 1 이상 정수(종목/조회 날짜 수 단위). |
+| `CALENDAR_MAX_RANGE_DAYS` | `2000` | 한 번에 공식 달력을 수집할 수 있는 시작일·종료일 간 최대 간격(달력일)입니다. | 1 이상 정수(달력일). BOOTSTRAP_CALENDAR_PAST_DAYS+BOOTSTRAP_CALENDAR_FUTURE_DAYS 이상 필요. |
+| `DATA_READY_TIME` | `16:00` | 수동 collect 명령의 당일 자료 조회 허용 시각. 예정 리밸런싱의 직전 거래일 수집에는 미적용. | 00:00~23:59의 HH:MM(KST), 예: 16:00. 서비스의 자동 수집 일정은 아님. |
+| `KIS_REAL_ACCOUNT_PASSWORD` | 비공개 / 미기입 | 선택적 실전 계좌 비밀번호(비밀정보): 현재 KIS REST 구현에서는 사용하거나 전송하지 않습니다. | 빈 문자열 또는 사용자 비밀 문자열(선택 항목, 현재 REST 구현 미사용). |
+| `KIS_DEMO_ACCOUNT_PASSWORD` | 비공개 / 미기입 | 선택적 모의 계좌 비밀번호(비밀정보): 현재 KIS REST 구현에서는 사용하거나 전송하지 않습니다. | 빈 문자열 또는 사용자 비밀 문자열(선택 항목, 현재 REST 구현 미사용). |
+| `KIS_REAL_HTS_ID` | 비공개 / 미기입 | 선택적 KIS 실전 HTS 사용자 ID: 현재 REST 구현에서는 사용하거나 전송하지 않습니다. | 빈 문자열 또는 사용자 비밀 문자열(선택 항목, 현재 REST 구현 미사용). |
+| `KIS_DEMO_HTS_ID` | 비공개 / 미기입 | 선택적 KIS 모의 HTS 사용자 ID: 현재 REST 구현에서는 사용하거나 전송하지 않습니다. | 빈 문자열 또는 사용자 비밀 문자열(선택 항목, 현재 REST 구현 미사용). |
+| `EXCLUDE_REGULATORY_MANAGED` | `true` | 관리종목 제외 여부: true는 제외 적용, false는 이 경고 자체로는 제외하지 않음입니다. | true / false, 대소문자 허용. |
+| `EXCLUDE_REGULATORY_CAUTIONARY` | `true` | 투자주의환기종목 제외 여부: true는 제외 적용, false는 이 경고 자체로는 제외하지 않음입니다. | true / false, 대소문자 허용. |
+| `EXCLUDE_REGULATORY_CAUTION` | `true` | 투자주의종목 제외 여부: true는 제외 적용, false는 이 경고 자체로는 제외하지 않음입니다. | true / false, 대소문자 허용. |
+| `EXCLUDE_REGULATORY_WARNING` | `true` | 투자경고종목 제외 여부: true는 제외 적용, false는 이 경고 자체로는 제외하지 않음입니다. | true / false, 대소문자 허용. |
+| `EXCLUDE_REGULATORY_RISK` | `true` | 투자위험종목 제외 여부: true는 제외 적용, false는 이 경고 자체로는 제외하지 않음입니다. | true / false, 대소문자 허용. |
+| `SYSTEM_LOG_PATH` | `rmmt/logs/system.log` | 운영 상태와 주문 상태 변경 및 오류 기록 경로 | 프로젝트 폴더 안의 상대/절대 파일 경로. 프로젝트 밖 경로는 허용하지 않음. 세 로그 경로는 서로 달라야 함. |
+| `TRADING_LOG_PATH` | `rmmt/logs/trading.log` | 확정 체결과 비용 정정 CSV 기록 경로; 전체 이력 유지 | 프로젝트 폴더 안의 상대/절대 파일 경로. 프로젝트 밖 경로는 허용하지 않음. 세 로그 경로는 서로 달라야 함. |
+| `SCREEN_LOG_PATH` | `rmmt/logs/screen.log` | 화면 출력 및 상세 JSON 진단 기록 경로: 상세 JSON은 대시보드에서 생략해도 파일에는 남습니다. | 프로젝트 폴더 안의 상대/절대 파일 경로. 프로젝트 밖 경로는 허용하지 않음. 세 로그 경로는 서로 달라야 함. |
+| `LOG_MAX_BYTES` | `10485760` | system 및 screen 로그의 파일당 최대 바이트; 초과 시 회전 | 1 이상 정수(바이트 단위). |
+| `LOG_BACKUP_COUNT` | `5` | system 및 screen 로그별 이전 파일 보관 개수 | 1 이상 정수(파일 단위). |
+| `DASHBOARD_ENABLED` | `true` | 터미널 대시보드 표시 여부: true는 필요한 상태·알림 중심 화면, false는 명령의 JSON 출력을 사용합니다. | true / false, 대소문자 허용. |
+| `DASHBOARD_REFRESH_SECONDS` | `3` | 대시보드의 일반 갱신 간격(초): 상태 변경·수집 진행 알림은 즉시 갱신할 수 있습니다. | 0보다 큰 유한한 숫자(초 단위, 소수 허용). |
+| `DASHBOARD_RECENT_LINES` | `10` | 대시보드에 표시할 최근 중요 알림의 최대 줄 수: 반복 대기는 생략하고 진행률은 최신 값으로 갱신합니다. | 1 이상 정수(줄 단위). |
+| `BOOTSTRAP_CALENDAR_PAST_DAYS` | `120` | 과거 달력 확보의 기본 일수(달력일, 최소 60): 포메이션 길이와 리밸런싱 기준일에 맞춰 실제 조회 범위를 늘립니다. | 60 이상 정수(달력일). 과거+미래 일수 합은 CALENDAR_MAX_RANGE_DAYS 이하. |
+| `BOOTSTRAP_CALENDAR_FUTURE_DAYS` | `45` | 미래 달력 확보의 기본 일수(달력일, 최소 14): 리밸런싱 간격에 맞춰 실제 조회 범위를 늘립니다. | 14 이상 정수(달력일). 과거+미래 일수 합은 CALENDAR_MAX_RANGE_DAYS 이하. |
+| `PREPARATION_STATE_PATH` | `rmmt/data/preparation_state.json` | 호환용 과거 준비 상태 경로. 서비스에서는 읽거나 쓰지 않으며 기존 파일 보존. | 프로젝트 폴더 안의 상대/절대 파일 경로. 프로젝트 밖 경로는 허용하지 않음. |
+| `FORMATION_DAYS` | `21` | 포메이션 수익률 간격(시장 거래일). 해당 F+1개 종가 구간이 실제 가격 조회 범위. | 5~252 정수(시장 거래일). 예: 5=1주, 21=약 1개월, 252=약 1년. 종가 F+1개 필요. |
+| `REBALANCE_DAYS` | `1W` | 선정·리밸런싱 주기. D=거래일, W=주간, M=월간, Y=연간. 휴장은 기간의 첫 개장일로 순연. | 1~252D / 1~52W / 1~12M / 1Y, 정수 뒤 단위 필수·대소문자 허용. 예: 1D, 2D, 1W, 2W, 1M, 2M, 1Y. |
+| `PREVIEW_HOLDING_ENABLED` | `false` | 대시보드 표시용 가상 보유: false로 바꾸면 제거합니다. 실제 원장·매매·전략손익에는 반영하지 않습니다. | true / false, 대소문자 허용. |
+| `PREVIEW_HOLDING_SYMBOL` | `005930` | 표시용 가상 보유 종목코드 | 6자리 숫자 종목코드 문자열. 앞자리 0 유지, 예: 005930. |
+| `PREVIEW_HOLDING_NAME` | `삼성전자` | 표시용 가상 보유 종목명 | 표시용 종목명 문자열. 예: 삼성전자. |
+| `PREVIEW_HOLDING_QUANTITY` | `10` | 표시용 가상 보유 수량(주) | 1 이상 정수(주 단위). |
+| `PREVIEW_HOLDING_PRICE` | `271500` | 표시용 가상 보유 평단 및 평가가격(원) | 0보다 큰 유한한 숫자(원 단위, 가상 평단). |
+| `DASHBOARD_QUOTE_REFRESH_SECONDS` | `5` | 보유·선정·가상 종목의 대시보드 현재가 REST 조회 최소 간격(초): 웹소켓이 아닌 주기 조회이며 조회량에 따라 지연될 수 있습니다. | 0보다 큰 유한한 숫자(초 단위, 소수 허용). |
+| `PREVIEW_EXTRA_HOLDINGS` | 9종목 예시 목록 | 추가 화면 표시용 가상 보유: 코드,이름,수량,가상평단(원); 종목 간 세미콜론 구분. 실제 매매·원장·손익에 반영하지 않으며 비우면 제거됩니다. 평단은 시세가 아닌 예시값입니다. | 빈 문자열 또는 코드,이름,수량,평단을 종목별 세미콜론으로 구분. 코드는 중복 없는 6자리 숫자, 이름 필수, 수량은 양의 정수, 평단은 양수. 예: 000660,SK하이닉스,10,200000. |
 
 추가 가상 보유 형식: `PREVIEW_EXTRA_HOLDINGS=000660,SK하이닉스,10,200000;035420,NAVER,10,200000`처럼 코드·이름·수량·평단을 쉼표, 종목을 세미콜론으로 구분한다. 기본 가상 종목을 포함해 종목코드는 중복되지 않는 6자리 숫자이고 수량·평단은 양수여야 한다.
 
-설정 중 일부는 현재 고정 계약이다: STRATEGY=reverse, SKIP=0, TIMEZONE=Asia/Seoul, NO_TRADE_DAYS=5, PERSISTENT_JUMP_PCT=35, SHOCK_OBSERVATIONS=5, LATE_START_POLICY=WITHIN_WINDOW_ONLY, EXECUTION_WINDOW_MINUTES=30, CAPITAL_POLICY=FIXED_CAP. 설정키가 존재해도 임의 값을 모두 지원한다는 의미는 아니다. 토큰은 사용자 비밀 설정과 별도로 API가 발급한 캐시 파일에 저장한다.
+설정 중 일부는 현재 고정 계약이다: SKIP=0, TIMEZONE=Asia/Seoul, NO_TRADE_DAYS=5, PERSISTENT_JUMP_PCT=35, SHOCK_OBSERVATIONS=5, LATE_START_POLICY=WITHIN_WINDOW_ONLY, EXECUTION_WINDOW_MINUTES=30, CAPITAL_POLICY=FIXED_CAP. STRATEGY는 reverse/momentum 중 선택한다. 설정키가 존재해도 임의 값을 모두 지원한다는 의미는 아니다. 토큰은 사용자 비밀 설정과 별도로 API가 발급한 캐시 파일에 저장한다.
 
 ## 13. 변경 이력
 
@@ -428,3 +437,205 @@ Reverse_Momentum/
 Etc 통합 검증: 변경 후 자동 테스트 129개 통과, 연구 Python 소스 구문 확인, 실제 운영 원장 경로 유지 확인. .gitignore의 로그 제외 경로는 rmmt/logs/로 수정했다.
 
 - 2026-10-07: .env 투자상한을 시작 시 원장에 자동 반영하도록 변경. 미완료 주문·예약금·초기자산·현금은 보존, 감사 기록 및 운영 알림 추가. 기존 상한보다 현재 보유 평가액이 커도 즉시 강제 청산하지 않으며 신규 매수 제한과 다음 리밸런싱 목표에 적용한다.
+
+
+## 리밸런싱 기간 문자열 및 앵커 제거 (2026-10-07)
+
+현재 REBALANCE_DAYS는 양의 정수 뒤 d/w/m/y 단위를 받는다. 예: 1D, 2D, 1W, 2W, 1M, 2M, 1Y. 대소문자는 정규화하며 단위 없는 정수는 지원하지 않는다. 허용 상한은 252D/52W/12M/1y이고 포메이션은 기존 FORMATION_DAYS(5~504 거래일)를 유지한다. 사용자 REBALANCE_ANCHOR_DATE는 설정·Config에서 제거했다. 앞선 앵커 기반 설명 및 숫자형 REBALANCE_DAYS 설명은 이 절로 대체한다.
+
+- 1D: 모든 공식 거래일, 시작일 제한 없음.
+- Nd (N>1): 매년 첫 공식 거래일부터 거래일 인덱스 0,N,2N...에 실행. 연초에 주기를 새로 계산한다. 해당 연초부터 공식 달력이 필요하며 부족하면 서비스가 수집한다.
+- Nw: 2000-01-03 월요일부터 경과한 주 번호가 N의 배수인 주의 첫 공식 거래일. 1w는 매주 월요일, 휴장이면 같은 주 첫 개장일. 주 전체 휴장이면 그 주는 실행하지 않는다.
+- Nm: 2000년 1월부터 월 번호가 N의 배수인 월의 첫 공식 거래일. 2m는 1·3·5·7·9·11월. 해당 월 전체가 휴장이면 실행하지 않는다.
+- 1Y: 매년 첫 공식 거래일. 달력의 시작이 기간 중간이면 그 첫 부분 기간을 건너뛰어 첫 개장일을 추정하지 않는다.
+
+재시작 및 달력 확장으로 주·월·년 위상이 바뀌지 않는다. 내부 계산 기준은 사용자 입력 앵커가 아니며 일 단위의 연초 초기화도 명시적인 계약이다. REVERSE_EXECUTION_TIME에 선정하고 완료 직후 리밸런싱하는 관계 및 30분 주문창은 동일하다. 전략 ID는 주기를 대문자로 넣는다(예 KOSDAQ_D1_21D_S0_1W_N20). 실제 .env는 기존 매일 운용 의도를 보존하여 REBALANCE_DAYS=1D, 양식은 1w이다.
+
+달력 기본 수집 범위는 연초 또는 포메이션 자료 확보일 중 이른 날부터이며 미래 확보는 기간에 맞춰 확장한다. 기존 공식 캐시를 일 단위 N>1의 연초 범위와 일반 유효성 조건으로 검증한다. 새로운 설정 해시로 기존 신호를 재검증하며 과거 실행/주문 원장은 삭제하지 않는다. 테스트 131개 통과(휴장 순연, 매일, 연초 거래일 간격, 월간/연간 및 격주 고정 위상 포함). 실제 KIS 접속·주문은 하지 않았다.
+
+- 2026-10-07: REBALANCE_DAYS 단위 문자열 지원, 사용자 앵커 제거, 일정 계산·설정·문서·테스트 갱신.
+
+- 2026-10-07: REBALANCE_DAYS 표기·기본값·로드 결과를 대문자 D/W/M/Y로 통일. 소문자 입력도 대문자로 정규화하며 일정 계산은 유지한다.
+
+
+## 최초 자동 준비와 예정 시각 스킵 (2026-10-07)
+
+서비스는 달력 확보 직후 선정 입력을 점검한다. 없거나 현재 시장·포메이션으로 검증할 수 없으면 SERVICE_AUTO_COLLECT의 마감 수집 여부와 별개로 즉시 직전 완료 거래일까지 최초 자료를 수집한다. KIS 가격 이력 및 Yahoo 분할조정 가격을 기존 검증으로 확보한다. 현재 마스터를 과거 명부라고 주장하지 않는다: bootstrap_current와 CURRENT_UNIVERSE_PREVIOUS_CLOSE_CURRENT_SHARES 기준을 기록하고 lineage.bootstrap에 historical_membership=false 및 실제 shares/regulatory 조회시각을 남긴다. 최초 시총은 직전 종가 × 수집 당시 상장주식수이므로 과거 당시 시총의 완전 복원이 아니며 일반 마감 자료와 구별해야 한다. 날짜를 넘겨 수집한 결과는 확정하지 않는다.
+
+예정 시작시각에 준비되지 않은 회차는 runs(kind=REBALANCE, state=SKIPPED, reason=DATA_NOT_READY_AT_START)에 영속 저장한다. 수집 중 예정시각을 넘어도 완료 뒤 시각 대조로 동일하게 스킵하며 재시작 후 늦은 실행을 허용하지 않는다. 단순 조회·수집이 주문 의도를 만들지 않는다. 준비 완료 cutoff가 예정 시작시각 이하인 경우만 신규 회차에 사용한다. 최초 자료는 오전에도 수집하며 수집 끝날 때 바로 리밸런싱하지 않고 .env 주기/시각을 따른다. 데이터가 준비될 때까지 다음 회차도 같은 조건으로 검사한다.
+
+준비 실패는 기존 오류 진단 및 재점검 경로를 사용한다. 동기 수집 중에는 broker 주문을 실행하지 않는다. 수집 실패 또는 늦은 완료로 스킵된 회차는 한글 최근 로그와 다음 일정에서 확인한다. 일반 거래일 마감 수집은 기존 정책을 유지한다. 회복 매도 대상도 신호도 없는 경우 빈 RECOVERY 실행을 만들지 않는다. 과거에 생성된 빈 실행 기록은 삭제하지 않는다. AWS 배포·접속 및 실제 주문은 본 수정에서 수행하지 않았다.
+
+- 2026-10-07: 로컬 최초 자동 자료 수집 및 예정 시각 자료 미완성 회차의 영구 스킵 구현, 빈 회복 실행 방지.
+
+
+## 양 시장 공통 전체 수집 (2026-10-07)
+
+수집은 MARKET/DECILE과 분리한다. KIS 공식 양시장 보통주 전체의 시총·명목가격·거래량·경고와 각 종목 상세 가격 이력 및 Yahoo 분할조정 검증을 수집한다. 스냅샷 market=COMBINED, collection_scope=ALL_MARKETS_FULL_HISTORY로 저장하고 각 row.market을 보존한다. compute_signal은 현재 MARKET으로 먼저 집단을 선택한 뒤 시총 정렬·십분위·필터·수익률 순위를 계산한다. COMBINED는 합친 모집단에서 단일 십분위를 계산한다. 기존 단일시장 스냅샷을 전체 자료로 간주하지 않으며 최초 준비 검사는 전체 수집 표시를 요구한다.
+
+상장일부터 상세 이력을 전체 종목에 확보하므로 최초 수집 시간이 크게 늘어난다. KIS 이력 캐시의 증분 갱신과 REST 간격 설정은 재사용한다. 이번 변경은 양시장 수집 범위 변경이며 전체 수집의 종목별 완료 체크포인트·공유 프로세스 속도제한·Yahoo 증분 캐시까지 새로 구현한 것은 아니다. 실패 후 재호출 시 KIS 저장 이력은 재사용하지만 전체 스냅샷은 완전 수집 후 확정한다. 실제 KIS 수집·AWS 배포·주문은 실행하지 않았다. MARKET을 변경해도 최신 공통 스냅샷의 자료를 선정에 사용할 수 있고, 설정 해시 변경에 따라 선정 결과를 다시 생성한다.
+
+- 2026-10-07: KOSPI/KOSDAQ 보통주 전체 시총·상태·상세 이력 수집과 공통 스냅샷 시장별 선정 구현.
+
+
+### 변경 이력: 2026-10-08 빈 회복 실행과 당일 일정
+
+주문 레코드가 하나도 없고 COMPLETE 상태인 RECOVERY 기록은 당일 리밸런싱과 다음일정 표시를 차단하지 않는다. 기록은 삭제하지 않는다. 주문이 있는 회복 실행, 미완료 회복 실행, REBALANCE 기록(자료 미준비 SKIPPED 포함)은 기존 중복 실행 제한을 유지한다. 예정 시작 시각부터 증분 수집을 허용하며 주문창 종료까지 완료되지 않으면 SKIPPED 처리한다. 기존 완료·스킵 기록의 당일 중복 제한은 유지한다.
+
+
+### 변경 이력: 2026-10-08 증분 수집 및 재개
+
+Yahoo 이력은 rmmt/data/yahoo_history/{market}_{symbol}.json에 상장일부터의 가격, 분할 이벤트, 원본 출처를 원자적으로 저장한다. 동일 기준일은 저장본을 재사용하고 새 기준일에는 KIS_HISTORY_OVERLAP_DAYS만큼 겹치는 최근 구간을 요청한다. 겹치는 가격 변경, 새 분할 이벤트, 겹침 없는 응답은 전체 이력 재조회로 전환한다. 실패한 조회는 이전 캐시를 덮어쓰지 않으며 불완전 자료를 확정하지 않는다. 기존 SPLIT_ONLY 검증을 유지한다.
+
+전체 시총 수집은 rmmt/data/kis_history/caps_checkpoint.json에 종목별 완료 결과와 출처를 저장한다. 기준일, bootstrap 여부, 수집 KST 날짜, 전체 명부 행 해시가 일치할 때만 완료한 종목을 건너뛴다. 다른 날 또는 명부 변경 시 다시 조회한다. 최신 주문 가능 여부와 경고는 주문 직전 조회 규칙을 유지한다. KIS 이력은 기존 종목별 캐시를 재사용한다. 중단된 종목 내부의 페이지까지 재개하는 기능은 미구현이며 해당 종목은 다시 조회한다. 일일 전체 시총 조회는 계속 필요하므로 수집 시간 단축의 실측은 일일 갱신 후 확인한다. 이 변경은 로컬 구현이며 AWS 적용에는 별도 배포·재시작이 필요하다.
+
+
+### 변경 이력: 정리매매 시총 결측과 반복 오류
+KIS 명부 liquidating=true이며 가격 또는 상장주식수가 0 이하인 종목은 LIQUIDATING_MISSING_CAP 사유로 수집 및 십분위 기준 집단에서 제외한다. 체크포인트에 제외 목록과 원본 조회 근거를 저장하고 스냅샷 collection_exclusions에 기록한다. 일반 종목의 결측은 전체 수집을 계속 차단한다. 같은 조건의 수집 재개 시 완료 종목의 중간 진행 메시지를 반복 출력하지 않는다. 서비스 실패는 동일 원인이라도 매회 원인 및 재시도 횟수를 화면·시스템 로그에 기록한다. 이 변경은 정리매매 결측 종목 제외로 십분위 경계를 바꿀 수 있다.
+
+
+### 변경 이력: 2년 가격 이력 및 포메이션 급변 검사
+이 절은 상장일부터 전체 이력을 요구하던 이전 규칙을 대체한다. KIS·Yahoo 이력 조회 시작은 가격 기준일에서 달력 기준 2년 전과 상장일 중 늦은 날짜이다(윤년 2월 29일은 2년 전 2월 28일). 당일 미완성 가격은 기존대로 사용하지 않는다. 기존 캐시의 범위가 충분하면 재사용하고 범위 밖 가격은 제거한다. 급변 상태는 포메이션 수익률 시작 가격부터 기준일까지 F+1 관측 구간에서 재계산한다. 구간 이전 급변과 영구 제외 이력은 승계하지 않는다. 35% 초과 급변, 이후 5회 관찰, 확정 시 해당 구간 내 제외 규칙은 유지한다. 포메이션 자료가 부족하면 선정 제외하며, 504거래일 설정도 2년 안에 충분한 거래일이 실제 존재해야 한다. 최초 수집 시 상장 전 기간이나 범위 밖 이력의 완전성을 요구하지 않는다. AWS 배포·재시작은 하지 않는다.
+
+
+### 변경 이력: 종목별 이력 수집 진행 표시
+KIS·Yahoo 처리 및 검증이 끝난 각 종목마다 PREPARING_SIGNAL_HISTORY 완료 수를 알린다. 최근 운영 로그는 같은 단계의 연속 진행 메시지를 한 행에서 교체하며 `YYYY.MM.DD HH:MM:SS 종목별 과거 가격 수집중 완료수/전체수`로 표시한다. 상세 KIS_HISTORY 종목 로그는 시스템 파일에 유지하되 화면 최근 로그에서 제외해 진행 행이 누적되지 않도록 한다. 오류·수집 제외 알림은 별도 행에 유지한다. TTY 대시보드는 기존 화면 재그리기로 같은 위치를 갱신한다.
+
+
+### 변경 이력: 시총 수집 진행 행
+시총 조회가 끝난 매 종목마다 KIS_ALL_COMMON_CAP 진행을 갱신하며 최근 운영 로그에 `YYYY.MM.DD HH:MM:SS 종목별 시총 수집중 완료수/전체수`로 표시한다. 연속 진행은 기존 행을 교체해 줄을 누적하지 않는다. 제외 종목도 처리 완료 수에 포함하고 제외 사유 알림은 보존한다. 캐시 재개 시 완료 구간 전체를 다시 출력하지 않는 기존 규칙을 유지한다. 상세 시스템 로그는 계속 저장한다. 로컬에서만 변경하며 AWS는 변경하지 않는다.
+
+
+### 변경 이력: 수집 서버와 완료율
+시총·과거 가격 진행 행에 실제 조회 단계(KIS 서버, Yahoo Finance), 저장 자료 재사용 또는 자료 검증 완료를 표시한다. 완료율은 완료 종목 수/전체 대상 수×100을 소수점 한 자리로 표시한다. 조회 중인 종목은 완료 전까지 완료 수에 포함하지 않는다. 시총 공급처는 KIS이며 Yahoo로 표시하지 않는다. 동일 단계 서버 전환과 종목별 진행은 한 행 갱신을 유지한다.
+
+
+### 변경 이력: 명부 시총 및 무작위 동률
+시총은 KIS 코스피·코스닥 명부의 시총 필드(억원)를 100,000,000배하여 사용한다. 종목별 현재가·시총 확인 일봉 요청은 제거한다. 명부 시총의 하루 정도 기준일 차이와 억원 단위 정밀도를 사용자 승인으로 허용한다. 정확한 과거 기준일을 추정해 기록하지 않으며 market_cap_actual_date=null, source=KIS_MASTER, basis=PREVIOUS_DAY_MASTER_APPROX로 보존한다. market_cap_date는 전략 자료 기준일이며 명부 시총 실제 산출일을 뜻하지 않는다. 명부 원본·조회 시각·해시를 보존한다. 일반 종목 시총 결측은 차단하고 정리매매 결측만 사유와 함께 제외한다. 경고는 명부에서 읽고 주문 직전 KIS 조회를 유지한다. 종가·거래량은 이후 1년 가격 이력에서 확보한다. 시총 동률은 스냅샷 생성 시 저장한 난수 seed와 종목코드의 해시로 섞어 십분위를 분할한다. 같은 스냅샷 재계산은 동일하며 새 수집 스냅샷의 동률 순서는 달라질 수 있다. SPAC·ETF·ETN 추가 필터는 이번 변경에 포함하지 않는다. 로컬 변경만 수행한다.
+
+
+### 변경 이력: 최근 로그 시각과 서버명 정렬
+최근 운영 로그의 모든 행은 KST 기준 `YYYY.MM.DD HH:MM:SS` 시각으로 통일한다. 수집 진행의 괄호 안 서버명은 한글 2칸·영문 1칸 기준 16칸 고정 폭으로 오른쪽 공백을 채워 서버 전환 시 완료 수의 시작 위치를 유지한다. 파일의 상세 시스템 로그 ISO 타임스탬프는 기존대로 유지한다.
+
+
+### 변경 이력: 서버명 5칸 제한
+수집 진행 로그의 괄호 안 서버명은 Yahoo 또는 KIS만 표시하고 ASCII 5칸으로 고정한다. Yahoo는 5자, KIS는 뒤에 공백 2칸을 채운다. 저장된 KIS 이력도 KIS, 저장된 Yahoo 이력 및 최종 대조 완료는 Yahoo로 표시하며 별도의 접속 여부 표시는 하지 않는다. 기존 16칸 서버명 표시는 이 규칙으로 대체한다. AWS 변경 없음.
+
+### 변경 이력: 1년 이력과 메모리 사용 축소
+기존 2년 수집 규칙을 대체한다. KIS·Yahoo 조회 및 캐시는 완료된 가격 기준일에서 달력 1년 전과 상장일 중 늦은 날짜부터 보관한다. 윤년은 2월 28일로 보정한다. 종목별 캐시는 기존대로 순차 저장하며 선정 스냅샷에는 전체 1년 이력 대신 포메이션 F+1 거래일만 넣는다. 보유종목 모니터링 일봉은 1년 범위를 유지한다. JSON 저장은 스트림에 직접 기록해 전체 직렬화 문자열을 추가로 만들지 않는다. 읽기는 파일 스트림에서 수행한다. FORMATION_DAYS 허용 범위는 5~252이며 달력 1년 안에 실제 F+1 관측이 부족하면 기존 자료 완전성 필터로 해당 종목을 제외한다. 기존 보관 스냅샷을 일괄 삭제하지 않으며 새로운 수집부터 축소한다. AWS 변경·배포·재시작·실제 주문은 수행하지 않는다.
+
+### 변경 이력: 2026-10-09 모멘텀/역모멘텀 선택
+
+STRATEGY=reverse/momentum 설정 검증과 Config 전략 필드를 추가했다. 동일 적격 후보·원래 수익률에 대해 역모멘텀은 오름차순, 모멘텀은 내림차순으로 선정하며 동률은 코드 오름차순을 유지한다. 모멘텀 ID의 _MOMENTUM 접미사, CLI 도움말·signal 출력·시작 로그·대시보드 한글 전략명·보고서 manifest 식별을 추가했다. 기존 실행 엔진의 필터·배분·매도 선행·차순위 대체·체결 대조·취소 규칙을 재사용한다.
+
+신규 원장에 strategy를 기록하고 쓰기/읽기 전용 모두 전략 불일치를 차단한다. 전략 메타데이터 없는 기존 원장은 역모멘텀으로 간주하며 일치하는 쓰기 접속에서만 보완한다. 불일치 원장의 투자상한·스키마·보유·주문 내용은 변경하지 않는다. 원장 유형 자동 전환·포지션 이관·CLI 전략 override는 미구현이다. Config 필드 추가로 기본 역모멘텀의 설정 해시도 변경되며 당일 선정 자료는 새 설정으로 재생성한다. 과거 실행·주문은 유지하고 기존 당일 재실행 제한을 적용한다.
+
+검증: python3 -B -m unittest discover -s Etc/tests -q 전체 154개 통과. 신규 13개 테스트는 설정·양 방향 순위·동률·음수/양수 수익률·경고 차순위·원장 불일치와 레거시 보완·모의 매도 후 매수·거절 대체·부분체결·타임아웃 UNKNOWN·재시작 중복 방지·선정 해시 재생성·CLI PAPER 보고서/화면을 확인한다. 합성 입력과 임시 원장만 사용했다. 기존 사용자 운영 .env와 운영 원장은 수정하지 않았고 실제 KIS 접속·주문, AWS 수정·배포·재시작, git commit/push는 수행하지 않았다.
+
+### 변경 이력: 2026-10-09 전략별 DB 경로 자동 선택
+
+앞선 수동 DB 경로 지정 안내를 대체한다. STRATEGY만 momentum으로 변경하면 선택 실행 모드의 원장 파일명에 momentum_을 자동 적용한다. 기본 LIVE 경로는 live.sqlite/momentum_live.sqlite로 구분하며 다른 모드도 같은 규칙이다. 기존 설정 경로와 디렉터리는 보존하고 이미 momentum_으로 시작하면 중복 적용하지 않는다. --db는 자동 경로보다 우선한다. check 명령에 실제 선택 경로(database_path)를 추가하고 자동 계산 경로에도 기존 프로젝트 내부 경로 검증을 적용했다. 기존 원장 유형 검사·잠금·주문 복구 규칙은 유지하며 기존 DB 파일을 이동·복사하거나 보유를 이관하지 않는다. 사용자 운영 .env와 AWS는 변경하지 않았다.
+
+검증: 전체 158개 테스트 통과. 네 실행 모드의 전략 전환 경로, 사용자 지정 디렉터리, 기존 접두사 보존, --db 우선, 설정키를 그대로 둔 모멘텀 선택, 자동 경로를 사용하는 CLI PAPER 체결·보고서 및 기존 역모멘텀 원장 보존, DB 생성 없는 check 경로 출력을 확인했다. 실제 KIS 접속·주문·AWS 배포·재시작은 수행하지 않았다.
+
+
+### 변경 이력: 2026-10-09 환경설정 입력값 주석
+
+사용자 요청으로 운영 .env와 .env.example의 100개 설정 항목 각각에 입력 가능한 값 주석을 추가했다. 전략·시장·실행/주문/계좌 정책 선택지, true/false, 고정 지원값, 포메이션·리밸런싱 범위, 숫자 단위와 최소값, 경로 제한·DB 자동 선택, 인증 및 가상 보유 입력 형식을 표시한다. UNRESOLVED와 DEFERRED의 주문 제한, DEMO 주문 미지원, 초기 달력 합계 조건, 토큰 발급 대기 최소 60초도 구분한다. 전체 설정 사전에 입력 범위 열을 추가하고 현재 미사용 REBALANCE_ANCHOR_DATE 항목을 제거했으며 FORMATION_DAYS=5~252 및 REBALANCE_DAYS 단위 표기를 현행 코드에 맞췄다. 거래일 일정 절의 과거 앵커 설명도 현행 D/W/M/Y 규칙과 일치시켰다.
+
+검증: 수정 전후 KEY=VALUE 줄을 그대로 보존하고 .env/.env.example 파싱 결과·설정 해시·인증값·파일 권한이 동일함을 확인했다. 주석만 변경했으며 프로그램·운영 설정값·원장·주문 동작은 바꾸지 않았다. 실제 비밀값은 출력하거나 명세에 복사하지 않았다. 서비스 실행·KIS 접속·AWS 수정·배포·재시작·git commit/push는 수행하지 않았다.
+
+## 예정시각 증분 수집 및 단계별 상태 (2026-10-12)
+
+이 절은 앞선 최초 자동 준비/예정 시작시각 즉시 스킵/16시 자동 수집 규칙을 대체한다. 서비스는 예정 리밸런싱의 30분 주문창에서 직전 거래일까지 증분 수집, 자료 검증, 종목선정, 매도, 매수를 순서대로 실행한다. 이미 COMPLETE/FAILED/INTERRUPTED/WINDOW_CLOSED/SKIPPED 등 실행 기록이 있는 날은 자료를 다시 수집하거나 주문을 재실행하지 않는다. 주문 없는 COMPLETE RECOVERY 예외는 유지한다.
+
+Yahoo의 asof_date는 요청 기준일이고 last_price_date는 실제 마지막 가격일이다. 같은 요청일이라도 필요한 거래일 가격이 없거나 0 이하이면 캐시를 완료로 재사용하지 않는다. 실제 마지막 가격일부터 겹침 구간 및 이전 누락일까지 다시 요청하고 정상 기존 이력을 합친다. 과거 가격 수정/분할 이벤트 변경은 전체 재조회한다. required_dates_complete는 요청에서 요구한 거래일 가격의 확보 여부이다. Yahoo 요청 실패는 정상 캐시 파일을 덮어쓰지 않는다. KIS 원주가의 동일 기준일·완전 범위·마지막 날짜가 확보된 캐시는 재시도 시 재조회하지 않는다. Yahoo 오류를 KIS 조정가격으로 대체하는 경로는 추가하지 않았다.
+
+현재 시장·십분위에서 가격·급변 이력 또는 거래량·경고 상태가 미확인이면 require_signal_data가 자료 미완성 오류를 발생시킨다. 저가·무거래·거래 차단·명시적 제외 경고·상장 후 포메이션 부족은 기존 종목 제외로 구분한다. 검증 실패 스냅샷은 DATA_INCOMPLETE와 signal_inputs_complete=false, input_error를 기록하고 선정 파일을 발행하지 않는다. 검증 성공은 signal_inputs_complete=true로 기록한다. 기존 스냅샷도 플래그만 믿지 않고 현재 설정으로 다시 검사한다. 정상적인 0종목 선정은 계속 가능하다.
+
+자료 오류는 해당 단계 ERROR와 재조회 대기시간으로 표시하고 SERVICE_ERROR_RETRY_SECONDS 뒤 다음 점검에서 정상 캐시를 재사용해 재조회한다. 수집 콜백·최종 발행 및 검증·선정 후에 종료시각을 재확인하고, 종료 뒤 신규 주문을 만들지 않는다. 늦은 자료 준비의 스킵 이유는 DATA_NOT_READY_BEFORE_DEADLINE이다. 수집·선정만으로 주문 의도를 만들지 않는다. 기존 실행 기록과 주문·예약금·체결 복구 계약은 보존한다.
+
+PIPELINE_PROGRESS 이벤트에 phase/status/day/completed/total 및 상세 사유를 기록한다. 화면은 현재처리와 다섯 단계 상태를 유지한다. 선정 완료에는 검사 수·선정 수·제외 사유별 집계를 기록한다. 매도·매수는 대상 처리 수와 실제 체결 수량, 거절·취소·미주문 수를 구분하며, 거절/취소가 있으면 단순 완료 대신 일부 미체결·미주문으로 표시한다. 대상 없는 단계도 완료로 표시한다. 반복 진행 이벤트는 같은 단계·상태끼리 최근 로그를 교체하며 단계 전환·오류는 보존한다.
+
+유지 종목은 목표수량과 실제 수량의 차이만 조정하며 전량 매도 후 재매수로 바꾸지 않았다. SERVICE_AUTO_COLLECT/--auto-collect는 호환용이며 별도 마감 수집을 수행하지 않는다. PREPARATION_STATE_PATH는 호환용 미사용이다. DATA_READY_TIME은 명시적 수동 collect의 당일 조회 제한에만 남아 있다. 새 감시 서비스나 AWS 배포·재시작은 수행하지 않았다.
+
+- 2026-10-12: 사용자 승인으로 예정시각 증분 수집→검증→선정→매도→매수 흐름, Yahoo 미완성 캐시 재조회, 단계별 진행·오류·완료 표시 및 주문창 종료 스킵을 구현. 16시 서비스 자동 수집을 제거하고 설정 한글 주석·명세를 동시 갱신.
+
+검증: 합성 자료와 모의 공급원·체결로 전체 단위/통합 테스트 163개를 실행했다. 동일 기준일의 null 캐시 재조회·이전 날짜 누락 보완·HTTP 실패 시 캐시 보존·분할/가격 변경 전체 재조회·수집/선정 후 주문 호출 순서·자료 오류 시 무주문·종료시각 스킵·정상 0종목 선정·유지 종목의 초과수량만 매도·UNKNOWN 재주문 방지 및 화면의 진행/오류/완료 표시를 포함한다. 실제 공급원 조회·실주문과 AWS 적용은 이번 구현 검증에서 수행하지 않았다.
+
+## 주문 없는 완료 회차의 명시적 당일 재예약 (2026-10-12)
+
+사용자가 오늘 재실행을 승인한 경우 `rearm-empty --date YYYY-MM-DD --at HH:MM --reason …`를 명시적으로 실행한다. 날짜는 오늘 KST, 시각은 현재보다 이후인 09:00~15:00 HH:MM만 허용한다. 원장 잠금을 확보하고 기존 REBALANCE가 COMPLETE인지, 당일 모든 실행에 주문이 0개인지, 다른 날을 포함한 미완료/UNKNOWN 주문이 없는지, 다른 당일 차단 실행이 없는지를 확인한다. 취소·거절 주문도 주문 기록으로 간주해 재예약을 거부한다. 주문 없는 COMPLETE RECOVERY 예외는 유지한다.
+
+원장 삭제나 주문·체결 삭제 없이, 기존 실행 레코드 전체를 EMPTY_REBALANCE_REARMED 감사 사건의 previous_run으로 보존하고 상태만 REARMED로 바꾼다. 이미 같은 시각으로 재예약된 회차는 중복 변경하지 않는다. CLI는 증권사에 접속하거나 주문하지 않는다.
+
+meta.rearm_execution_day/rearm_execution_time에 당일 한정 실행시각을 기록한다. 서비스 시작과 날짜 변경 시 execution_config가 해당 날짜에만 이 시각을 적용한다. 기본 .env REVERSE_EXECUTION_TIME은 변경하지 않으며 다음 날짜에는 기본 시각으로 복귀한다. 조회용 대시보드도 당일 한정 시각을 표시한다. 유효하지 않은 원장 시각은 오류로 차단한다.
+
+REARMED면서 주문 없는 회차만 당일 차단 검사에서 제외한다. 수집·검증·선정을 완료하고 실행을 시작할 때 주문 기록·예약 상태를 다시 검사하며 STARTED로 전환하고 새 설정 해시·계획을 저장한다. EMPTY_REBALANCE_REARM_CONSUMED 감사 사건으로 재예약 권한 소비를 기록한다. 이후 COMPLETE/FAILED/INTERRUPTED/WINDOW_CLOSED/SKIPPED는 기존 당일 중복 제한을 다시 적용한다. 자료 미완성 상태가 주문창 끝까지 지속되면 재예약도 SKIPPED로 종료하며 추가 자동 재실행을 허용하지 않는다. 재예약한 뒤 주문 기록이 생겼다면 차단 예외와 권한 소비를 모두 거부한다.
+
+- 2026-10-12: 사용자 승인으로 오늘 주문 없는 완료 회차의 재예약 명령과 영속 감사 기록, 당일 한정 실행시각 및 다음 날 기본시각 복귀를 추가했다. 명령 구현과 검증은 로컬에서 수행했으며 AWS 원장 재예약·코드 적용·서비스 재시작은 수행하지 않았다. 기존 현금·상한·보유·주문·체결 기록은 보존한다.
+
+
+## KIS 수정주가 전환 및 네 가지 실행 문제 보완 (2026-10-12)
+
+이 절은 과거 Yahoo 신호가격·분할만 조정·전체 보통주 1년 이력 수집 계약을 대체하는 실제 로컬 구현이다. 변경으로 선정 순위와 급변 판정이 달라질 수 있다. 과거 연구 결과의 가격 기준과 동일하다고 주장하지 않는다.
+
+### 가격 공급원과 데이터 계약
+
+실전 수집·선정은 KIS REST와 공식 양시장 마스터만 사용한다. 일봉 API에 FID_COND_MRKT_DIV_CODE=J(KRX), FID_PERIOD_DIV_CODE=D를 사용하며 신호가격은 FID_ORG_ADJ_PRC=0, 명목 종가·거래량·평가는 1로 조회한다. 수정주가의 거래량을 원주가 거래량에 덮어쓰지 않는다. 가격은 adjusted_close, source=KIS, adjustment_basis=KIS_ADJUSTED로 기록한다. 공식 KIS 수정주가를 임의의 분할만 조정한 가격이나 배당 재투자 가격으로 해석하지 않는다. 가격 출처·기준·필요 거래일 완전성·양수 가격을 검증하고 공급원 간 1% 일치 검사는 제거한다. 필요한 포메이션 밖의 오래된 가격 차이는 선정 차단 근거가 아니다.
+
+공개 설정과 설정 해시에 signal_price_basis=KIS_ADJUSTED, data_contract_version=2를 포함하여 과거 선정 결과의 무변경 재사용을 막는다. 기존 Yahoo 캐시·원본·주문 원장은 삭제하거나 이관하지 않는다. 새 수정주가 캐시는 data_dir/kis_adjusted_history/{symbol}.json에 schema_version=2, source=KIS, price_mode=0, start/asof_date, required_dates_complete, bars와 원본 lineage를 저장한다. 원주가 캐시는 kis_history에 별도로 유지한다. 원본 경로·계보에도 price_mode를 기록하여 두 조회 모드를 구분한다. 보고서 manifest에도 가격 기준과 데이터 계약 버전을 저장한다. 기존 YAML/JSON의 YAHOO/SPLIT_ONLY/split_adjusted_close만 있는 자료는 현재 신호로 사용할 수 없다. 합성 CLI 예제는 새 계약으로 갱신했다.
+
+### 수집 범위와 캐시
+
+전체 양시장 보통주의 공식 명부·시총·경고를 읽고, 설정 MARKET의 모집단을 정렬한 뒤 DECILE을 먼저 결정한다. 수집과 선정은 동일한 시총 정렬 및 저장된 동률 seed를 사용한다. 가격·경고 필터를 먼저 적용해서 모집단을 줄이지 않는다. 상세 가격 이력만 해당 십분위와 귀속 보유종목의 합집합으로 제한한다. DECILE=0이면 설정 시장 전체를 조회한다. 모든 보통주의 명부·시총 행은 스냅샷에 남으며 수집하지 않은 종목의 daily는 비어 있다. collection_scope=ALL_MARKETS_CAPS_TARGET_HISTORY, history_selection={market,decile,formation_days}, history_symbols 및 history_scope=FORMATION_TARGET_AND_OWNED로 실제 범위를 표시한다. 시장·십분위·포메이션이 바뀌면 다른 집단의 미수집 가격을 정상 제외로 취급하지 않고 현재 설정으로 다시 수집해야 한다.
+
+조회 시작은 F거래일 전과 상장일 중 늦은 날이다. 기본 F=21에서는 종목당 필요한 22개 종가를 수집하며 전체 1년을 매일 요청하지 않는다. 보유종목의 5일 무거래·명목 평가에도 이 구간을 사용한다. 원주가는 기존 정상 캐시와 중첩 구간을 활용한 증분 갱신이며, 같은 기준일도 필요한 날짜가 빠져 있으면 누락일까지 다시 조회한다. 수정주가는 증자·분할 후 과거 값의 기준이 달라질 수 있으므로 새 기준일에는 필요한 F+1 구간 전체를 같은 조회 기준으로 갱신한다. 일반 22일은 한 요청, 100건을 넘는 구간은 과거 날짜 커서로 페이지 조회한다. 서로 다른 기준일의 수정주가를 단순 병합하지 않는다. 같은 기준일·범위·필수 가격·원본 계보가 완전한 수정주가 캐시만 재사용한다. 불완전 캐시는 재조회하며 HTTP/API 실패는 정상 기존 캐시를 덮어쓰지 않는다. 요청 속도 제한은 유지한다. 실제 수집·선정·주문 전체가 주문창 안에 완료된다는 실측 보장은 하지 않는다.
+
+### 오류·진행·종료 상태
+
+자료 누락과 KIS 응답 형식 오류(잘못된 목록·날짜·가격·거래량)는 RMMTError로 전달하여 단계 ERROR, 원인 및 재조회 간격을 출력한다. 조회 HTTP 응답 최상위 형식도 검증한다. 주문 POST의 응답 불명확은 BrokerUnknown으로 유지하며 자동 재전송하지 않는다. 자료가 주문창 종료까지 준비되지 않으면 SKIPPED, DATA_NOT_READY_BEFORE_DEADLINE으로 처리하고 신규 매수를 하지 않는다. 수집과 페이지 요청 전후에 종료시각을 검사한다. 필요 자료가 없을 때 원주가를 수정주가로 대신 채우거나 Yahoo로 되돌아가는 경로는 없다.
+
+실전 Yahoo 호출은 제거했으며, 호환 진단용 yahoo_history 함수는 빈 quote, null close, 잘못된 timestamp·분할 이벤트를 실패 결과로 처리하여 재호출할 수 있다. 진단용 verify_split_only는 required_dates를 주면 그 구간만 검증한다. 이 두 함수는 실전 수집·선정에서 사용하지 않는다.
+
+시총 진행의 전체 수는 전체 보통주, 가격 이력 진행의 전체 수는 실제 조회 대상 수이며 서버는 KIS다. 수집→검증→선정→매도→매수 단계와 오류·시간 종료·완료 표시를 유지한다. 매수 중 시간이 끝나거나 처리 대상이 남으면 원장과 반환 상태를 WINDOW_CLOSED로 기록하고 매수 단계 TIMEOUT을 출력한다. 일부만 매수한 회차를 COMPLETE로 표시하지 않는다. 부분체결·미확인 주문 대조, 예약금, 당일 재실행 제한, 유지 종목의 목표수량 차이 조정 계약은 유지한다.
+
+- 2026-10-12: 사용자 승인으로 과거 불일치에 의한 전체 선정 차단·공급원 응답 예외·전체 상세 이력 조회 부담·시간 종료 완료 오표시를 보완하고 KIS 수정주가 단일 신호 공급원으로 전환했다. 명세·계약·운영 안내·한글 설정 주석·합성 예제를 동시 갱신했다. 로컬 구현이며 AWS 배포·재예약·재시작·실주문은 수행하지 않았다.
+
+검증 결과: 전체 단위·통합 테스트 190개 통과. 모의 공급원으로 원주가/수정주가 모드 분리, 새 기준일의 조정 기준 변경 반영, 동일 기준일 캐시 재사용·누락 재조회·실패 시 캐시 보존, 잘못된 API 응답, 페이지별 종료시각 확인, 전체 시총 유지 및 시장/십분위/보유 대상 제한, 동률 순서 일치, 설정 변경 시 재수집, 과거 Yahoo 신호 차단, 5개 매수 중 1개 체결 후 시간 종료의 WINDOW_CLOSED·TIMEOUT 및 중복주문 방지를 확인했다. 실제 대상 전체 수집·실주문·AWS 적용을 수행한 결과는 아니다.
+
+
+## 단일 파일 1년 일봉 준비와 08시 수집·13:30 선정 분리 (2026-10-12)
+
+사용자 요청으로 2년 준비 제안을 1년으로 축소했다. 프로그램 밖의 collect_kis_history.py가 KIS의 현재 전체 KOSPI/KOSDAQ 보통주 중 가격 기준일까지 상장된 종목을 조회한다. 장중 당일 일봉은 제외하며 기준일은 공식 거래일 달력의 직전 완료 거래일이다. 초기 준비 요청 기준일은 2026-10-08, 요청 시작은 2025-10-08이다. 휴장·주말 가격을 생성하지 않는다. 현재 명부·시총을 사용하므로 과거 구성종목 전체를 복원한 백테스트 자료라고 주장하지 않는다.
+
+AWS로 옮길 자료는 KIS_HISTORY_BUNDLE_PATH(기본 rmmt/data/kis_history.sqlite)의 단일 SQLite 파일이다. meta에 공식 달력, 마스터, 시총, 공개 설정, 기준일, 상태, 검증 보고서 및 포메이션 스냅샷을 넣고, histories에 종목별 수정 일봉 1년(모드0)과 최근 F+1 원주가·거래량(모드1)을 넣는다. 수정 일봉은 종가뿐 아니라 시가·고가·저가·거래량·거래대금·수정률을 보관한다. raw에는 API 원문과 요청 범위·가격 모드·조회시각·SHA256을 압축 저장한다. failures에는 오류와 재조회 근거를 보관한다. 인증 토큰과 계좌번호·키는 자료 파일에 넣지 않는다. SQLite DELETE journal을 사용하여 완료 후 본체 하나만 싱크할 수 있다. 수집 중인 파일은 배포 준비 완료로 간주하지 않는다.
+
+수집 전용 실행은 주문·취소·계좌 변경 API를 허용하지 않는다. 조회 날짜·형식·가격·거래량·OHLC 범위와 공식 달력 대비 날짜 완전성을 검사한다. 수집 완료는 MARKET·DECILE 및 선정 적격 여부와 관계없이 전체 대상 종목을 기준으로 판정한다. 종목별 상장일부터 직전 거래일까지의 보관 범위 안에서 수정주가 1년 구간과 최근 F+1 원주가·거래량 구간의 실제 날짜·값·저장 기준일·시작일을 재검증한다. 거래량 0인 무거래 일봉의 가격 0은 저장할 수 있지만 일봉 자체의 누락은 허용하지 않는다. 수정주가 누락·오류는 year_gaps, 원주가·거래량 누락·오류는 original_gaps에 기록하며 하나라도 남거나 조회 오류가 있으면 collection_complete=false, snapshot_ready=false, INCOMPLETE다. 현재 선정 구간이 정상이어도 전체 수집 완료로 처리하지 않는다. 전체 수집 완료 후에만 새 스냅샷을 발행하며, 미완료 시 기존 스냅샷은 보존하되 파일 상태·기준일 검증으로 사용을 차단한다. 종목선정 입력 검증과 선정은 이후 선정 시각에 별도로 수행한다.
+
+종목별 정상 완료 자료는 중단 후 재개할 때 재사용하며 조회 오류는 제한 횟수 재시도하고 기록한다. 성공 응답에 필요한 날짜가 빠져 있어도 해당 종목의 실패로 기록하고 서비스 재조회 대상으로 남긴다. 같은 기준일의 재시도에서도 저장된 complete 플래그만 믿지 않고 실제 날짜·가격·거래량을 검사한다. 긴 증분 공백은 최신 페이지부터 과거 방향으로 커서를 이동하여 필요한 날짜가 모두 채워질 때까지 조회한다. API 응답의 첫 페이지로 끝내거나 누락 구간을 완료로 표시하지 않는다. 응답이 비었거나 요청 시작 경계까지 도달해도 누락이 남으면 미완료로 저장하고 다음 서비스 재조회에서 복구한다. 수정주가 중첩 비교에서 조정 기준 변경이 발견되면 기존 수정주가를 병합하지 않고 해당 종목의 전체 보관 범위를 최신 페이지부터 다시 조회한다. 페이지 상한과 선정 시각 종료 검사는 추가 페이지에도 적용하며 실패한 종목의 이전 커밋 자료를 보존한다.
+
+검증 보고서의 collection_contract_version=2와 collection_complete=true가 확인되어야 READY 파일을 재사용한다. 기존 판정으로 만들어진 READY 파일은 수집 시각에 재검증하며, 정상 종목의 동일 기준일 자료는 추가 가격 조회 없이 재사용한다. 구형 완료 표시만 있는 파일은 선정 시각에 사용할 수 없다. 포메이션 변경 시 원주가 필요 구간과 스냅샷을 다시 준비한다.
+
+거래일 `.env`의 `DAILY_COLLECTION_TIME`(기본 08:00 KST)부터 기존 파일을 직접 증분 갱신한다. 설정은 HH:MM 형식이며 `REVERSE_EXECUTION_TIME`보다 빨라야 한다. 값을 바꾼 뒤 프로그램을 재시작하면 새 시각을 읽어 수집 시작 판단과 대시보드 일정·진행 문구에 반영한다. 해당 시각 이후 선정 시각 이전에 프로그램을 시작하면 준비되지 않은 자료의 수집을 시작한다. 전체 보통주의 직전 완료 거래일 자료를 조회하고 기존 1년 범위를 유지한다. 수정주가는 중첩 구간의 가격이 바뀌면 조정 기준 변경으로 보고 해당 종목의 1년 수정 일봉을 다시 조회한다. 겹침을 무시한 단순 병합은 하지 않는다. 새 상장종목을 현재 명부에 반영한다. 이 단계는 선정·주문 원장 의도를 만들지 않는다. 선정 시각까지 갱신을 완료하지 못하면 신규 매매를 차단하며 부족한 자료로 거래하지 않는다.
+
+13:30(REVERSE_EXECUTION_TIME)은 검증된 통합 파일의 직전 거래일 스냅샷을 읽어 종목선정→매도→매수를 진행하는 시각이다. 이 단계에서는 대량 일봉 수집을 다시 하지 않는다. 파일의 상태·기준일·포메이션 달력·출처와 현재 설정을 검사한다. 없거나 미완성이면 ERROR/재조회 대기를 표시하고 주문창 종료 후 SKIPPED로 기록한다. 완료한 원장·주문 이력은 그대로 유지하며 과거 실행 기록을 삭제하지 않는다. 기존 history_bundle_path가 없는 합성/호환 경로는 앞 절의 대상 집단 직접 수집 동작을 유지한다.
+
+정해진 시각에 수집을 시작하려면 프로그램이 `DAILY_COLLECTION_TIME` 이전부터 service로 실행되어 있어야 한다. 코드와 완성된 단일 파일을 AWS에 싱크하고 .env의 경로·수집 시각·선정 시각을 맞춘 후 서비스를 재시작해야 한다. 현재 로컬 설정은 08:00 수집·13:30 선정이며 각각 .env에서 변경할 수 있다. 로컬 코드·데이터 준비만 수행하며 AWS 파일 수정·서비스 설치·재시작·실주문은 수행하지 않는다. 초기 실제 수집 결과는 완료 후 별도로 기록한다.
+
+- 2026-10-12: 사용자 요청으로 수집 시각의 `.env` 설정 계약을 명시했다. 기존 `DAILY_COLLECTION_TIME` 로딩·형식/선정 전 시각 검증·수집 시작 판단을 유지하고 08시 고정 진행·오류 문구를 설정 시각 또는 일반 문구로 수정했다. 로컬 기본값은 08:00을 유지했다.
+
+- 2026-10-12: 사용자 승인으로 전 종목의 수정주가 1년 구간·필요 원주가/거래량의 완전성을 수집 완료 조건으로 변경했다. 선정 가능 여부에 따른 READY 판정을 제거하고 전 종목 완료 후 스냅샷 발행, 누락 종목 재조회·기존 파일 완료 계약 재검증, 100일 초과 증분 공백의 추가 페이지 조회를 구현했다. 수집 미완료 시 이후 선정·신규 리밸런싱을 보류하는 영향은 사용자에게 설명했다. AWS 수정·재시작·실주문은 수행하지 않았다.
+
+전체 수집 완료·긴 공백 복구 검증: 전체 회귀 테스트 213개 통과. 수정·원주가 양쪽의 100거래일 초과 공백 추가 페이지 조회, 선정 대상 밖의 과거 수정주가·기준일 원주가 누락, 누락/구형 기준일 이력과 거짓 complete 플래그, 같은 날 미완료 재시도, 구형 READY 파일의 재검증, 페이지 조회 중 선정 시각 도달 시 이전 커밋 보존 및 무주문 상태를 확인했다. 기존 실제 1년 파일도 API 호출 없이 새 완료 계약으로 재검증했다. 2026-10-08 기준 2,612종목의 수정주가/원주가 구간 누락 종목 0, READY, SQLite integrity_check=ok이며 저장된 가격 이력의 해시가 재검증 전후 동일하다. 완료 보고서와 스냅샷 메타데이터를 갱신했으므로 AWS 싱크 시 갱신된 단일 파일도 함께 복사해야 한다.
+
+- 2026-10-12: 사용자 승인으로 독립 수집 프로그램·단일 SQLite 자료 파일·검증 스냅샷·종목별 재개와 08시 증분 수집/13:30 선정·매매 분리 기능을 구현했다. 2년 요청을 사용자 수정에 따라 1년으로 변경했다. 수집 전용 토큰은 기존 AWS 유효 토큰을 읽어 로컬에서 재사용하며 AWS에 쓰지 않았다.
+
+단일 파일·분리 일정 검증: 합성 응답으로 파일 읽기·기준일/완료 상태 차단, 조정 기준 변경 시 해당 종목 1년 재조회, 증분 갱신·정상 캐시 재사용·누락 재조회·조회 실패 시 캐시 보존, 수집 종료시각 차단, 08시 무선정·무주문과 13:30 추가 수집 없는 선정 흐름 및 손상된 파일의 재시도 오류 처리를 검증했다. 최종 실제 수집 통계는 작업 완료 후 기록한다.
+
+
+### 실제 초기 수집 완료 결과 (2026-10-12)
+
+실제 KIS 조회로 2025-10-08~2026-10-08 요청 구간의 전체 대상 2,612종목을 준비했다. 가격 기준일까지 상장된 종목만 포함하며 이후 상장된 5종목은 초기 구간에 가격을 만들어 넣지 않는다. 실제 첫 일봉은 휴장일 이후인 2025-10-10, 마지막 일봉은 2026-10-08이며 공식 거래일은 244일이다. 수정 OHLCV는 627,435행, 최근 F+1 원주가·거래량은 57,349행이다. 상장일부터의 공식 거래일 대비 누락 날짜 0, 조회 오류 0, 스냅샷 완전성 검증 통과와 READY 상태를 확인했다. 초기 스냅샷의 현재 설정 적격 후보는 79종목이며 실제 다음 실행일 선정 결과를 보장하는 숫자는 아니다.
+
+단일 파일은 rmmt/data/kis_history.sqlite다. KIS 차트 API 원문, 공식 마스터 원본 2개, 공식 달력, 수정·원주가 자료, 검증·포메이션 스냅샷을 포함한다. 원본 응답 SHA256 일치와 모든 일봉의 공식 거래일/기준일 범위, SQLite integrity_check=ok를 확인했다. 토큰·앱키·계좌정보와 거래 원장은 포함하지 않는다. 공개 명부 및 시총은 현재 조회 자료로서 과거 구성종목 복원 자료가 아니다. 전체 회귀 테스트 203개가 통과했다. 이 결과는 로컬 실제 수집이며 AWS 싱크·서비스 재시작·실주문을 실행하지 않았다.

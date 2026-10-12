@@ -77,6 +77,9 @@ class KIS:
             diagnostic_error('kis_request',exc,method=method,path=path,tr_id=tr_id)
             error=BrokerUnknown if method=='POST' else RMMTError
             raise error('KIS 응답 불명확: 주문은 자동 재전송하지 않습니다.') from None
+        if not isinstance(payload,dict):
+            error=BrokerUnknown if method=='POST' else RMMTError
+            raise error('KIS 응답 형식 오류: 조회 재시도 또는 주문 접수 대조가 필요합니다.')
         if response.status_code!=200:
             from .logs import diagnostic_error
             diagnostic_error('kis_http_response',RMMTError('KIS HTTP '+str(response.status_code)),method=method,path=path,tr_id=tr_id,http_status=response.status_code,msg_cd=payload.get('msg_cd'),msg1=payload.get('msg1'))

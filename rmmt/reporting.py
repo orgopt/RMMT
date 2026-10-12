@@ -20,10 +20,12 @@ def export_report(config,signal=None,plan=None,ledger=None,snapshot=None,summary
     write_json(output/'config.json',config.public()|{'config_hash':config.hash})
     code_hash=hashlib.sha256(b''.join(p.read_bytes() for p in sorted(local_path('rmmt').glob('*.py')))+local_path('main_rmmt.py').read_bytes()).hexdigest()
     write_json(output/'manifest.json',{'spec_version':'0.6','code_version':__version__,'code_hash':code_hash,
-        'mode':config.mode,'run_id':run_id,'created_at':datetime.now(timezone.utc).isoformat(),
+        'mode':config.mode,'strategy':config.strategy,'strategy_id':config.strategy_id,
+        'run_id':run_id,'created_at':datetime.now(timezone.utc).isoformat(),
         'snapshot_hash':hashlib.sha256(json.dumps(snapshot,sort_keys=True).encode()).hexdigest() if snapshot else None,
         'source_quality':(snapshot or {}).get('quality'),'filter_version':'regulatory5_configurable_causal35_v2',
-        'execution_policy_version':'window30_no_chase_v1','simulated':config.mode=='PAPER'})
+        'execution_policy_version':'window30_no_chase_v2','signal_price_basis':'KIS_ADJUSTED',
+        'data_contract_version':2,'simulated':config.mode=='PAPER'})
     if signal:
         write_json(output/'signal.json',signal)
         csv_file(output/'signals.csv',signal['candidates'])

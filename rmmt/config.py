@@ -35,6 +35,7 @@ def read_env(path):
 
 @dataclass(frozen=True)
 class Config:
+    strategy: str = 'reverse'
     mode: str = 'DRY_RUN'
     environment: str = 'real'
     capital: Decimal = Decimal('10000000')
@@ -49,8 +50,7 @@ class Config:
     market: str = 'KOSDAQ'
     decile: int = 1
     formation_days: int = 21
-    rebalance_days: int = 5
-    rebalance_anchor_date: str = '2026-10-12'
+    rebalance_days: str = '1W'
     minimum_price: Decimal = Decimal('1000')
     buy_fee: Decimal = Decimal('.00015')
     sell_fee: Decimal = Decimal('.00015')
@@ -62,6 +62,8 @@ class Config:
     exclude_risk: bool = True
     order_policy: str = 'MARKET'
     execution_time: str = '10:00'
+    collection_time: str = '08:00'
+    history_bundle_path: str = ''
     window_minutes: int = 30
     shock_policy: str = 'UNRESOLVED'
     dividend_policy: str = 'UNRESOLVED'
@@ -76,7 +78,7 @@ class Config:
     poll_seconds: float = 3
     quote_max_age: int = 30
     status_max_age: int = 60
-    strategy_id: str = 'KOSDAQ_D1_21D_S0_5D_N20'
+    strategy_id: str = 'KOSDAQ_D1_21D_S0_1W_N20'
     data_dir: str = 'rmmt/data'
     results_dir: str = 'rmmt/results'
     calendar_path: str = 'rmmt/data/calendar.json'
@@ -119,14 +121,27 @@ class Config:
     bootstrap_future_days: int = 45
     preparation_state_path: str = 'rmmt/data/preparation_state.json'
 
+    def __post_init__(self):
+        if self.strategy not in ('reverse','momentum'):
+            raise RMMTError('STRATEGY는 reverse 또는 momentum이어야 합니다.')
+        base_id=self.strategy_id.removesuffix('_MOMENTUM')
+        object.__setattr__(self,'strategy_id',base_id+('_MOMENTUM' if self.strategy=='momentum' else ''))
+
+    @property
+    def strategy_label(self):
+        return '모멘텀' if self.strategy=='momentum' else '역모멘텀'
+
     def excluded_regulatory_flags(self):
         return tuple(flag for flag in ('MANAGED','CAUTIONARY','CAUTION','WARNING','RISK') if getattr(self,'exclude_'+flag.lower()))
 
     def database_path(self):
-        return getattr(self,'db_'+self.mode.lower())
+        path=Path(getattr(self,'db_'+self.mode.lower()))
+        if self.strategy=='momentum' and not path.name.startswith('momentum_'):
+            path=path.with_name('momentum_'+path.name)
+        return str(path)
 
     def public(self):
-        return {k: str(v) if isinstance(v, Decimal) else v for k, v in asdict(self).items()}
+        return {k: str(v) if isinstance(v, Decimal) else v for k, v in asdict(self).items()} | {'signal_price_basis':'KIS_ADJUSTED','data_contract_version':2}
 
     @property
     def hash(self):
@@ -170,6 +185,15 @@ INT_SETTINGS={'bootstrap_past_days':'BOOTSTRAP_CALENDAR_PAST_DAYS','bootstrap_fu
     'history_cache_gap_days':'KIS_HISTORY_CACHE_MAX_GAP_DAYS','progress_interval':'COLLECTION_PROGRESS_INTERVAL',
     'calendar_max_days':'CALENDAR_MAX_RANGE_DAYS','log_max_bytes':'LOG_MAX_BYTES','log_backup_count':'LOG_BACKUP_COUNT'}
 
+def parse_rebalance(value):
+    import re
+    match=re.fullmatch(r'([1-9][0-9]*)([dwmy])',str(value).lower().strip())
+    if not match:raise RMMTError('REBALANCE_DAYS는 1D, 2D, 1W, 2W, 1M, 2M, 1Y 형식이어야 합니다.')
+    count=int(match[1]);unit=match[2]
+    if count>{'d':252,'w':52,'m':12,'y':1}[unit]:raise RMMTError('리밸런싱 최대 기간은 252D, 52W, 12M, 1Y입니다.')
+    return count,unit
+
+
 def preview_holdings(config):
     if not config.preview_holding_enabled:return {}
     result={config.preview_holding_symbol: {'name':config.preview_holding_name,'quantity':config.preview_holding_quantity,'price':config.preview_holding_price}}
@@ -195,8 +219,10 @@ def load_config(env_path=None):
         value=get(key).lower()
         if value not in ('true','false'):raise RMMTError(key+': true 또는 false 필요')
         return value=='true'
-    for key, expected in {'STRATEGY':'reverse',
-                          'SKIP':'0',
+    strategy=get('STRATEGY').lower().strip()
+    if strategy not in ('reverse','momentum'):
+        raise RMMTError('STRATEGY는 reverse 또는 momentum이어야 합니다.')
+    for key, expected in {'SKIP':'0',
                           'TIMEZONE':'Asia/Seoul',
                           'NO_TRADE_DAYS':'5','PERSISTENT_JUMP_PCT':'35','SHOCK_OBSERVATIONS':'5','LATE_START_POLICY':'WITHIN_WINDOW_ONLY'}.items():
         if get(key) != expected:
@@ -209,25 +235,24 @@ def load_config(env_path=None):
         if not capital_manwon.is_finite() or capital_manwon<=0 or capital_manwon!=capital_manwon.to_integral_value():
             raise RMMTError('REVERSE_MOMENTUM_CAPITAL_MANWON은 만원 단위 양의 정수여야 합니다.')
         formation_days=int(get('FORMATION_DAYS'))
-        rebalance_days=int(get('REBALANCE_DAYS'))
-        if not 5<=formation_days<=504:raise RMMTError('FORMATION_DAYS는 5~504 거래일 정수여야 합니다.')
-        if not 1<=rebalance_days<=252:raise RMMTError('REBALANCE_DAYS는 1~252 거래일 정수여야 합니다.')
-        from datetime import date
-        anchor=get('REBALANCE_ANCHOR_DATE')
-        if date.fromisoformat(anchor).isoformat()!=anchor:raise RMMTError('REBALANCE_ANCHOR_DATE는 YYYY-MM-DD 형식이어야 합니다.')
+        if not 5<=formation_days<=252:raise RMMTError('FORMATION_DAYS는 5~252 거래일 정수여야 합니다.')
+        rebalance_days=get('REBALANCE_DAYS').upper().strip()
+        parse_rebalance(rebalance_days)
         market=get('MARKET').upper()
         if market not in ('KOSDAQ','KOSPI','COMBINED'):raise RMMTError('MARKET은 KOSDAQ, KOSPI, COMBINED 중 하나여야 합니다.')
         count = int(get('HOLDINGS'))
         decile = int(get('DECILE'))
         if not 0<=decile<=10:raise RMMTError('DECILE은 0~10 범위의 정수여야 합니다.')
-        config = Config(preview_extra_holdings=values.get('PREVIEW_EXTRA_HOLDINGS',''),preview_holding_enabled=boolean('PREVIEW_HOLDING_ENABLED'),
+        config = Config(strategy=strategy,preview_extra_holdings=values.get('PREVIEW_EXTRA_HOLDINGS',''),preview_holding_enabled=boolean('PREVIEW_HOLDING_ENABLED'),
             preview_holding_symbol=get('PREVIEW_HOLDING_SYMBOL'),preview_holding_name=get('PREVIEW_HOLDING_NAME'),
             preview_holding_quantity=int(get('PREVIEW_HOLDING_QUANTITY')),preview_holding_price=Decimal(get('PREVIEW_HOLDING_PRICE')),mode=get('RUN_MODE').upper(), environment=get('KIS_ENV'),
             capital=capital_manwon*Decimal('10000'),
-            capital_policy=get('CAPITAL_POLICY'), holdings=count,decile=decile,market=market,formation_days=formation_days,rebalance_days=rebalance_days,rebalance_anchor_date=anchor,
+            capital_policy=get('CAPITAL_POLICY'), holdings=count,decile=decile,market=market,formation_days=formation_days,rebalance_days=rebalance_days,
             minimum_price=Decimal(get('MIN_PRICE')), buy_fee=Decimal(get('BUY_FEE')),
             sell_fee=Decimal(get('SELL_FEE')), sell_tax=Decimal(get('SELL_TAX')),
             order_policy=get('ORDER_POLICY').upper(),execution_time=get('REVERSE_EXECUTION_TIME'),
+            collection_time=values.get('DAILY_COLLECTION_TIME','08:00'),
+            history_bundle_path=values.get('KIS_HISTORY_BUNDLE_PATH','rmmt/data/kis_history.sqlite'),
             **{field:boolean(key) for field,key in REGULATORY_SETTINGS.items()},
             window_minutes=int(get('EXECUTION_WINDOW_MINUTES')),
             shock_policy=get('SHOCK_POLICY'), dividend_policy=get('DIVIDEND_POLICY'),
@@ -239,7 +264,7 @@ def load_config(env_path=None):
             rest_interval=float(get('KIS_REST_MIN_INTERVAL_SECONDS')),
             poll_seconds=float(get('POLL_SECONDS')), quote_max_age=int(get('QUOTE_MAX_AGE_SECONDS')),
             status_max_age=int(get('STATUS_MAX_AGE_SECONDS')),
-            strategy_id=f'{market}_D{decile}_{formation_days}D_S0_{rebalance_days}D_N{count}',
+            strategy_id=f'{market}_D{decile}_{formation_days}D_S0_{rebalance_days.upper()}_N{count}',
             **{field:get(key) for field,key in PATH_SETTINGS.items()},
             dashboard_enabled=boolean('DASHBOARD_ENABLED'),auto_collect=boolean('SERVICE_AUTO_COLLECT'),data_ready_time=get('DATA_READY_TIME'),
             **{field:float(get(key)) for field,key in FLOAT_SETTINGS.items()},
@@ -284,6 +309,8 @@ def load_config(env_path=None):
         if not math.isfinite(value) or value<=0:raise RMMTError('양수 설정 필요: '+field)
     for field in PATH_SETTINGS:
         local_path(getattr(config,field))
+    if config.history_bundle_path:local_path(config.history_bundle_path)
+    local_path(config.database_path())
     if len({local_path(getattr(config,k)) for k in ('system_log_path','trading_log_path','screen_log_path')})!=3:
         raise RMMTError('세 로그 경로는 서로 달라야 합니다.')
     try:
@@ -292,6 +319,10 @@ def load_config(env_path=None):
         if not re.fullmatch(r'\d{2}:\d{2}',config.data_ready_time):raise ValueError()
         time.fromisoformat(config.data_ready_time)
     except ValueError:raise RMMTError('DATA_READY_TIME은 HH:MM 형식 필요') from None
+    try:
+        if not re.fullmatch(r'\d{2}:\d{2}',config.collection_time):raise ValueError()
+        if time.fromisoformat(config.collection_time)>=time.fromisoformat(config.execution_time):raise ValueError()
+    except ValueError:raise RMMTError('DAILY_COLLECTION_TIME은 선정 시각보다 이른 HH:MM 형식이어야 합니다.') from None
     if config.bootstrap_past_days+config.bootstrap_future_days>config.calendar_max_days:
         raise RMMTError('초기 달력 과거/미래 범위의 합은 CALENDAR_MAX_RANGE_DAYS 이하여야 합니다.')
     if config.bootstrap_past_days<60 or config.bootstrap_future_days<14:
